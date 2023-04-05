@@ -70,6 +70,8 @@ def create_depot(
 ):
     commands = ["p4", "depot", "-i"]
     now = datetime.now()
+    if not user_name:
+        user_name = os.getenv("P4USER")
 
     if depot_type == "stream":
         depot_template = STREAM_DEPOT_TEMPLATE.format(

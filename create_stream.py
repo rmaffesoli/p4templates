@@ -9,7 +9,7 @@ import os
 import subprocess
 
 
-MAINLINE_TEMPLATE = """
+STREAM_TEMPLATE = """
 Stream:	//{depot_name}/{stream_name}
 
 Owner:	{user_name}
@@ -28,30 +28,51 @@ Options:	{options}
 ParentView:	{parent_view}
 
 Paths:
-    share ...
+{paths}
+
+Remapped:
+{remapped}
+
+Ignored:
+{ignored}
+
 """
 
 
 def create_stream(
     depot_name=None,
     stream_name=None,
-    stream_type=None,
-    user_name=None,
-    parent_view=None,
-    parent_stream=None,
+    user_name="template",
+    stream_type="mainline",
+    parent_view="inherit",
+    parent_stream="none",
+    options="",
+    paths="    share ...\n",
+    remapped="",
+    ignored="",
 ):
     """create_stream doc string"""
     commands = ["p4", "stream", "-i"]
 
-    if "//" not in parent_stream:
+    if parent_stream is not "none" and "//" not in parent_stream:
         parent_stream = "/".join(["/", depot_name, parent_stream])
 
-    if stream_type == "mainline":
-        options = "allsubmit unlocked notoparent nofromparent mergedown"
-    elif stream_type == "development":
-        options = "allsubmit unlocked toparent fromparent mergedown"
+    if not options:
+        if stream_type in ["mainline", "virtual"]:
+            options = "allsubmit unlocked notoparent nofromparent mergedown"
+        elif stream_type in ["development", "task"]:
+            options = "allsubmit unlocked toparent fromparent mergedown"
 
-    stream_template = MAINLINE_TEMPLATE.format(
+    if isinstance(paths, (list, set, tuple)):
+        paths = "".join([f"    {_}\n" for _ in paths])
+
+    if isinstance(remapped, (list, set, tuple)):
+        remapped = "".join([f"    {_}\n" for _ in remapped])
+
+    if isinstance(ignored, (list, set, tuple)):
+        ignored = "".join([f"    {_}\n" for _ in ignored])
+
+    stream_template = STREAM_TEMPLATE.format(
         depot_name=depot_name,
         stream_name=stream_name,
         stream_type=stream_type,
@@ -59,6 +80,9 @@ def create_stream(
         parent_stream=parent_stream,
         parent_view=parent_view,
         options=options,
+        paths=paths,
+        remapped=remapped,
+        ignored=ignored,
     )
 
     with subprocess.Popen(
@@ -80,6 +104,7 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--type", default="mainline")
     parser.add_argument("-v", "--view", default="inherit")
     parser.add_argument("-p", "--parent", default="none")
+    parser.add_argument("-o", "--options", nargs="*", default="")
 
     parsed_args = parser.parse_args()
 
@@ -90,4 +115,5 @@ if __name__ == "__main__":
         user_name=parsed_args.user,
         parent_view=parsed_args.view,
         parent_stream=parsed_args.parent,
+        options=parsed_args.options,
     )
