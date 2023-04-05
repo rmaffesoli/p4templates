@@ -55,14 +55,14 @@
       "depot": "unreal_test_depot",
       "name": "unreal_test_task",
       "type": "task",
-      "parent": "unreal_test_dev",
+      "parent": "unreal_test_dev"
     },
     {
       "depot": "unreal_test_depot",
       "name": "unreal_test_dev_virtual",
       "type": "virtual",
       "parent": "unreal_test_dev_2",
-      "paths":["share ...py"]
-    },
+      "paths": ["share ..."]
+    }
   ]
 }
