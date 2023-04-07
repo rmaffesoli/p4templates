@@ -11,6 +11,7 @@ import os
 from create_depot import create_depot
 from create_stream import create_stream
 from create_group import create_group
+from create_user import create_user
 
 
 def set_default(obj):
@@ -42,6 +43,16 @@ def read_json(json_path):
 
 
 def process_template(template):
+    for user in template.get("users", []): 
+        create_user(
+            name=user['name'],
+            email=user['email'],
+            full_name=user.get('full_name', ''),
+            job_view=user.get('job_view', ''),
+            auth_method=user.get('auth_method', ''),
+            reviews=user.get('reviews', ''),
+    )
+
     for depot in template.get("depots", []):
         create_depot(
             depot_name=depot["name"],

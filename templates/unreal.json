@@ -22,7 +22,7 @@
       ],
       "users": [
         "rmaffesoli",
-        "super"
+        "test_dude"
       ]
     }
 
@@ -64,5 +64,26 @@
       "parent": "unreal_test_dev_2",
       "paths": ["share ..."]
     }
+  ],
+  "users": [
+    {
+      "name": "test_dude",
+      "email":"test1@dude.com",
+      "full_name": [
+        "test", 
+        "dude"
+      ]
+    }
+  ],
+  "permissions": [
+    {
+      "access_level": "write",
+      "type": "group",
+      "name": "unreal_test_group",
+      "host": "*",
+      "path": "//unreal_test_depot/...",
+      "comment": "auto generated"
+    }
   ]
 }
+ 
