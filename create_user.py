@@ -6,17 +6,11 @@ from __future__ import print_function
 
 import argparse
 import subprocess
-from datetime import datetime
-
 
 USER_TEMPLATE = """
 User:    {name}
 
 Email:    {email}
-
-Update:    {creation_date}
-
-Access:    {creation_date}
 
 FullName:    {full_name}
 """
@@ -32,7 +26,6 @@ def create_user(
 ):
     """create_user doc string"""
     commands = ["p4", "user", "-fi"]
-    now = datetime.now()
 
     if isinstance(full_name, (list, set, tuple)):
         full_name = " ".join(full_name)
@@ -49,7 +42,6 @@ def create_user(
     user_template = USER_TEMPLATE.format(
         name=name,
         email=email,
-        creation_date=now.strftime("%Y/%m/%d %H:%M:%S"),
         full_name=full_name
     )
 
