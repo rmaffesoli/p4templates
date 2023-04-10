@@ -30,7 +30,7 @@ def create_user(
     if isinstance(full_name, (list, set, tuple)):
         full_name = " ".join(full_name)
 
-    if isinstance(job_view, (list, set, tuple )):
+    if isinstance(job_view, (list, set, tuple)):
         job_view = "".join([f"    {_}\n" for _ in job_view])
 
     if isinstance(reviews, (list, set, tuple)):

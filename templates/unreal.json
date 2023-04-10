@@ -84,6 +84,45 @@
       "path": "//unreal_test_depot/...",
       "comment": "auto generated"
     }
-  ]
+  ],
+  "populate": [
+
+  ],
+  "types": {
+    "binary+S2w": [
+        "//....exe",
+        "//....dll",
+        "//....lib",
+        "//....app",
+        "//....dylib",
+        "//....stub",
+        "//....ipa"
+    ],
+    "binary+l": [
+        "//....uasset",
+        "//....umap",
+        "//....upk"
+    ],
+    "binary": [
+        "//....bmp",
+        "//....png",
+        "//....tga",
+        "//....raw",
+        "//....r16",
+        "//....mb",
+        "//....fbx"
+    ], 
+    "text": [
+        "//....ini",
+        "//....config",
+        "//....cpp",
+        "//....h",
+        "//....c",
+        "//....cs",
+        "//....m",
+        "//....mm",
+        "//....py"        
+    ]
+  }
 }
  
