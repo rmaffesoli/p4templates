@@ -17,7 +17,6 @@ def get_typemap():
         type_stdout = proc.communicate()[0]
 
         type_string = type_stdout.decode()
-        print(type_string)
         type_string = type_string.split("TypeMap:\r")[1]
         type_string = type_string.replace('\t','')
         type_string = type_string.replace('\n\n','\n')
@@ -48,7 +47,6 @@ def add_type(type_dict, type_key, type_value):
 
 
 def save_typemap(type_dict):
-    # print(type_dict)
     protection_lines = ["TypeMap:"]
     for file_type in sorted(type_dict):
         for file_path in sorted(type_dict[file_type]):
@@ -58,7 +56,6 @@ def save_typemap(type_dict):
             )
 
             protection_lines.append(entry_line)
-    # print('\n'.join(protection_lines))
 
     with subprocess.Popen(
         ["p4", "typemap", "-i"],

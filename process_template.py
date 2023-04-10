@@ -13,6 +13,7 @@ from create_stream import create_stream
 from create_group import create_group
 from create_user import create_user
 from edit_permissions import append_new_protections
+from edit_typemap import append_new_typemap_entry
 
 
 def set_default(obj):
@@ -44,6 +45,8 @@ def read_json(json_path):
 
 
 def process_template(template):
+    
+    append_new_typemap_entry(template.get("types", {}))
     
     append_new_protections(template.get("protections", []))
 
