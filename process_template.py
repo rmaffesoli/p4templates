@@ -12,6 +12,7 @@ from create_depot import create_depot
 from create_stream import create_stream
 from create_group import create_group
 from create_user import create_user
+from create_branch import create_branch, populate_branch, delete_branch
 from edit_permissions import append_new_protections
 from edit_typemap import append_new_typemap_entry
 
@@ -96,6 +97,21 @@ def process_template(template):
             remapped=stream.get("remapped", ""),
             ignored=stream.get("ignored", ""),
         )
+
+    for branch in template.get('branches', []):
+        create_branch(
+            branch_name=branch['name'],
+            view=branch['view'],
+            options=branch.get("options", ["unlocked"]),
+            owner=branch.get("owner", os.getenv("P4USER")),
+        )
+        
+        populate_branch(branch['name'])
+
+        delete_branch(branch['name'])
+
+
+
 
 
 def get_template_preset(preset_name, template_lut_path="preset_templates.json"):

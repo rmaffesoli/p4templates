@@ -1,3 +1,161 @@
 {
-  "content": "I swear"
+  "depots": [
+    {
+      "name": "unity_test_depot",
+      "type": "stream",
+      "depth": "1"
+    }
+  ],
+  "groups": [
+    {
+      "name": "unity_test_group",
+      "description": "A group I'll be making and deleting often.",
+      "owners": [
+        "rmaffesoli"
+      ],
+      "users": [
+        "rmaffesoli",
+        "test_dude"
+      ]
+    }
+
+  ],
+  "streams": [
+    {
+      "depot": "unity_test_depot",
+      "name": "unity_test_main"
+    },
+    {
+      "depot": "unity_test_depot",
+      "name": "unity_test_dev",
+      "type": "development",
+      "parent": "unity_test_main"
+    },
+    {
+      "depot": "unity_test_depot",
+      "name": "unity_test_approval",
+      "type": "development",
+      "parent": "unity_test_main"
+    },
+    {
+      "depot": "unity_test_depot",
+      "name": "unity_test_dev_2",
+      "type": "development",
+      "parent": "unity_test_approval",
+      "ignored": [
+
+      ]
+    },
+    {
+      "depot": "unity_test_depot",
+      "name": "unity_test_task",
+      "type": "task",
+      "parent": "unity_test_dev"
+    },
+    {
+      "depot": "unity_test_depot",
+      "name": "unity_test_dev_virtual",
+      "type": "virtual",
+      "parent": "unity_test_dev_2",
+      "paths": [
+        "share ..."
+      ]
+    }
+  ],
+  "users": [
+    {
+      "name": "test_dude",
+      "email":"test1@dude.com",
+      "full_name": [
+        "test", 
+        "dude"
+      ]
+    }
+  ],
+  "protections": [
+    {
+      "access": "write",
+      "type": "group",
+      "name": "unity_test_group",
+      "host": "*",
+      "path": "//unity_test_depot/...",
+      "comment": "auto generated"
+    }
+  ],
+  "branches": [
+    {
+      "name": "unity_demo_populate",
+      "options": [
+        "unlocked"
+      ],
+      "view": {
+        "//populate_demo/main/old_project/...": "//unity_test_depot/unity_test_main/new_project/...",
+        "//populate_demo/main/old_project/old_project.py": "//unity_test_depot/unity_test_main/new_project/new_project.py"
+      }
+    }
+  ],
+  "types": {
+    "text": [
+      "//....js",
+      "//....cs",
+      "//...shader",
+      "//....meta"
+    ],
+    "text+l" : [
+      "//....cm",
+      "//....proc",
+      "//....md5mesh",
+      "//....md5anim",
+      "//....ma"
+    ],
+    "binary": [
+      "//....dll",
+      "//....exe",
+      "//....response",
+      "//....lib",
+      "//....pdb",
+      "//....u",
+      "//....ini",
+      "//....stub",
+      "//....ip"
+    ],
+    "binary+l" : [
+      "//....prefab",
+      "//....mb",
+      "//....mat",
+      "//....psb",
+      "//....mp3",
+      "//....fbx",
+      "//....unity",
+      "//....asset",
+      "//....aas",
+      "//....tga",
+      "//....jpg",
+      "//....lwo",
+      "//....wav",
+      "//....ogg",
+      "//....demo",
+      "//....roq",
+      "//....doc",
+      "//....xls",
+      "//....celtx",
+      "//....pdf",
+      "//....odt",
+      "//....ods",
+      "//....ppt",
+      "//....skp"
+    ],
+    "binary+lS": [
+      "//....dds",
+      "//....bnk",
+      "//....light",
+      "//....shadow",
+      "//....ibl",
+      "//....bik",
+      "//....upk"
+    ]
+  }
 }
+ 
+
+
