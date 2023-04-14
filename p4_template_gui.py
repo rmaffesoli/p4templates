@@ -467,7 +467,9 @@ class P4TemplateEditorDialog(QDialog):
             self.depot_list.setCurrentRow(0)
 
             for i, key in enumerate(['name', 'type', 'depth', 'user']):
-                self.depot_table.setItem(i, 0, QTableWidgetItem(key.capitalize()))
+                key_item = QTableWidgetItem(key.capitalize())
+                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+                self.depot_table.setItem(i, 0, key_item)
                 self.depot_table.setItem(i, 1, QTableWidgetItem(convert_to_string(self.current_template_data['depots'][0].get(key, self.defaults['depot'][key]))))
 
         # Groups
@@ -477,7 +479,9 @@ class P4TemplateEditorDialog(QDialog):
             self.group_list.setCurrentRow(0)
 
         for i, key in enumerate(['name', 'description', 'max_results', 'max_scan_rows','max_lock_time', 'max_open_files', 'timeout', 'password_timeout', 'subgroups', 'owners', 'users']):
-                self.group_table.setItem(i, 0, QTableWidgetItem(key.capitalize()))
+                key_item = QTableWidgetItem(key.capitalize())
+                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+                self.group_table.setItem(i, 0, key_item)
                 self.group_table.setItem(i, 1, QTableWidgetItem(convert_to_string(self.current_template_data['groups'][0].get(key, self.defaults['group'][key]), ', ')))
 
         # Users
@@ -488,7 +492,9 @@ class P4TemplateEditorDialog(QDialog):
             self.user_list.setCurrentRow(0)
 
             for i, key in enumerate(['name', 'email', 'full_name', 'auth_method', 'reviews', 'job_view']):
-                self.user_table.setItem(i, 0, QTableWidgetItem(key.capitalize()))
+                key_item = QTableWidgetItem(key.capitalize())
+                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+                self.user_table.setItem(i, 0, key_item)
                 self.user_table.setItem(i, 1, QTableWidgetItem(convert_to_string(self.current_template_data['users'][0].get(key, self.defaults['user'][key]), ', ')))
 
         # Streams
@@ -499,7 +505,9 @@ class P4TemplateEditorDialog(QDialog):
             self.stream_list.setCurrentRow(0)
 
             for i, key in enumerate(['name', 'type', 'depot', 'user', 'view', 'parent', 'options']):
-                self.stream_table.setItem(i, 0, QTableWidgetItem(key.capitalize()))
+                key_item = QTableWidgetItem(key.capitalize())
+                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+                self.stream_table.setItem(i, 0, key_item)
                 self.stream_table.setItem(i, 1, QTableWidgetItem(convert_to_string(self.current_template_data['streams'][0].get(key, self.defaults['stream'][key]), ' ')))
 
         # Protections
@@ -510,7 +518,9 @@ class P4TemplateEditorDialog(QDialog):
             self.protection_list.setCurrentRow(0)
 
             for i, key in enumerate(['access', 'type', 'name', 'host', 'path', 'comment']):
-                self.protection_table.setItem(i, 0, QTableWidgetItem(key.capitalize()))
+                key_item = QTableWidgetItem(key.capitalize())
+                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+                self.protection_table.setItem(i, 0, key_item)
                 self.protection_table.setItem(i, 1, QTableWidgetItem(convert_to_string(self.current_template_data['protections'][0].get(key, self.defaults['protection'][key]), ' ')))
 
         # Types
@@ -532,7 +542,9 @@ class P4TemplateEditorDialog(QDialog):
             self.branch_list.setCurrentRow(0)
 
             for i, key in enumerate(['name', 'owner', 'options']):
-                self.branch_table.setItem(i, 0, QTableWidgetItem(key.capitalize()))
+                key_item = QTableWidgetItem(key.capitalize())
+                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+                self.branch_table.setItem(i, 0, key_item)
                 self.branch_table.setItem(i, 1, QTableWidgetItem(convert_to_string(self.current_template_data['branches'][0].get(key, self.defaults['branch'][key]))))
 
             for i, item in enumerate(self.current_template_data['branches'][0]['view'].items()):
