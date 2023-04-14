@@ -75,10 +75,7 @@
     {
       "name": "test_dude",
       "email":"test1@dude.com",
-      "full_name": [
-        "test", 
-        "dude"
-      ]
+      "full_name": "test dude"
     }
   ],
   "protections": [
