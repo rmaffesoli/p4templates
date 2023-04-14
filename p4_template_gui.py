@@ -1,4 +1,3 @@
-import sys
 import os
 
 from PyQt6.QtCore import Qt
@@ -552,7 +551,7 @@ class P4TemplateEditorDialog(QDialog):
                 self.branch_view_table.setItem(i, 0, QTableWidgetItem(item[0]))
                 self.branch_view_table.setItem(i, 1, QTableWidgetItem(item[1]))
 
-                
+
 def convert_to_string(input, delimiter=' '):
     if isinstance(input, str):
         return input
