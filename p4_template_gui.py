@@ -2,10 +2,10 @@ import os
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
-    QApplication, 
-    QWidget, 
-    QDialog, 
-    QPushButton, 
+    QApplication,
+    QWidget,
+    QDialog,
+    QPushButton,
     QVBoxLayout,
     QHBoxLayout,
     QTabWidget,
@@ -13,7 +13,7 @@ from PyQt6.QtWidgets import (
     QTableWidget,
     QComboBox,
     QTableWidgetItem,
-    QHeaderView
+    QHeaderView,
 )
 
 
@@ -27,21 +27,23 @@ class P4TemplateEditorDialog(QDialog):
         self.exec()
 
     def create_ui_elements(self):
-        self.btn_save_as = QPushButton('Save as...')
-        self.btn_save = QPushButton('Save')
-        self.btn_run = QPushButton('Run')
+        self.btn_save_as = QPushButton("Save as...")
+        self.btn_save = QPushButton("Save")
+        self.btn_run = QPushButton("Run")
 
         self.main_tab_widget = QTabWidget()
         self.template_cbox = QComboBox()
 
         self.depot_tab = QWidget()
-        
+
         self.depot_list = QListWidget()
-        self.add_depot_btn = QPushButton('+')
-        self.remove_depot_btn = QPushButton('-')
+        self.add_depot_btn = QPushButton("+")
+        self.remove_depot_btn = QPushButton("-")
         self.depot_table = QTableWidget()
 
-        self.depot_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.depot_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
         self.depot_table.horizontalHeader().setVisible(False)
         self.depot_table.verticalHeader().setVisible(False)
         self.depot_table.setColumnCount(2)
@@ -49,11 +51,13 @@ class P4TemplateEditorDialog(QDialog):
 
         self.stream_tab = QWidget()
         self.stream_list = QListWidget()
-        self.add_stream_btn = QPushButton('+')
-        self.remove_stream_btn = QPushButton('-')
+        self.add_stream_btn = QPushButton("+")
+        self.remove_stream_btn = QPushButton("-")
         self.stream_table = QTableWidget()
 
-        self.stream_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.stream_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
         self.stream_table.horizontalHeader().setVisible(False)
         self.stream_table.verticalHeader().setVisible(False)
         self.stream_table.setColumnCount(2)
@@ -61,24 +65,27 @@ class P4TemplateEditorDialog(QDialog):
 
         self.group_tab = QWidget()
         self.group_list = QListWidget()
-        self.add_group_btn = QPushButton('+')
-        self.remove_group_btn = QPushButton('-')
+        self.add_group_btn = QPushButton("+")
+        self.remove_group_btn = QPushButton("-")
         self.group_table = QTableWidget()
 
-        self.group_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.group_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
         self.group_table.horizontalHeader().setVisible(False)
         self.group_table.verticalHeader().setVisible(False)
         self.group_table.setColumnCount(2)
         self.group_table.setRowCount(11)
 
-
         self.user_tab = QWidget()
         self.user_list = QListWidget()
-        self.add_user_btn = QPushButton('+')
-        self.remove_user_btn = QPushButton('-')
+        self.add_user_btn = QPushButton("+")
+        self.remove_user_btn = QPushButton("-")
         self.user_table = QTableWidget()
 
-        self.user_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.user_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
         self.user_table.horizontalHeader().setVisible(False)
         self.user_table.verticalHeader().setVisible(False)
         self.user_table.setColumnCount(2)
@@ -86,11 +93,13 @@ class P4TemplateEditorDialog(QDialog):
 
         self.protection_tab = QWidget()
         self.protection_list = QListWidget()
-        self.add_protection_btn = QPushButton('+')
-        self.remove_protection_btn = QPushButton('-')
+        self.add_protection_btn = QPushButton("+")
+        self.remove_protection_btn = QPushButton("-")
         self.protection_table = QTableWidget()
 
-        self.protection_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.protection_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
         self.protection_table.horizontalHeader().setVisible(False)
         self.protection_table.verticalHeader().setVisible(False)
         self.protection_table.setColumnCount(2)
@@ -98,39 +107,54 @@ class P4TemplateEditorDialog(QDialog):
 
         self.typemap_tab = QWidget()
         self.typemap_type_list = QListWidget()
-        self.typemap_add_type_btn = QPushButton('+')
-        self.typemap_remove_type_btn = QPushButton('-')
+        self.typemap_add_type_btn = QPushButton("+")
+        self.typemap_remove_type_btn = QPushButton("-")
         self.typemap_path_list = QListWidget()
-        self.typemap_add_path_btn = QPushButton('+')
-        self.typemap_remove_path_btn = QPushButton('-')
+        self.typemap_add_path_btn = QPushButton("+")
+        self.typemap_remove_path_btn = QPushButton("-")
 
         self.branch_tab = QWidget()
         self.branch_list = QListWidget()
-        self.add_branch_btn = QPushButton('+')
-        self.remove_branch_btn = QPushButton('-')
+        self.add_branch_btn = QPushButton("+")
+        self.remove_branch_btn = QPushButton("-")
         self.branch_table = QTableWidget()
-        self.branch_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.branch_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
         self.branch_table.horizontalHeader().setVisible(False)
         self.branch_table.verticalHeader().setVisible(False)
         self.branch_table.setColumnCount(2)
         self.branch_table.setRowCount(3)
 
         self.branch_view_table = QTableWidget()
-        self.branch_view_add_path_btn = QPushButton('+')
-        self.branch_view_remove_path_btn = QPushButton('-')
-        self.branch_view_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.branch_view_add_path_btn = QPushButton("+")
+        self.branch_view_remove_path_btn = QPushButton("-")
+        self.branch_view_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
         self.branch_view_table.horizontalHeader().setVisible(False)
         self.branch_view_table.verticalHeader().setVisible(False)
         self.branch_view_table.setColumnCount(2)
         self.branch_view_table.setRowCount(2)
 
+        self.tag_tab = QWidget()
+        self.add_tag_btn = QPushButton("+")
+        self.remove_tag_btn = QPushButton("-")
+        self.tag_table = QTableWidget()
+        self.tag_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
+        self.tag_table.horizontalHeader().setVisible(False)
+        self.tag_table.verticalHeader().setVisible(False)
+        self.tag_table.setColumnCount(2)
+
     def add_ui_elements_to_layout(self):
-        
+
         # Depot Tab
         self.depot_hlayout = QHBoxLayout()
         self.depot_btn_hlayout = QHBoxLayout()
         self.depot_vlayout = QVBoxLayout()
-        
+
         self.depot_vlayout.addWidget(self.depot_list)
         self.depot_btn_hlayout.addWidget(self.remove_depot_btn)
         self.depot_btn_hlayout.addWidget(self.add_depot_btn)
@@ -151,7 +175,7 @@ class P4TemplateEditorDialog(QDialog):
         self.stream_hlayout.addLayout(self.stream_vlayout)
         self.stream_hlayout.addWidget(self.stream_table)
         self.stream_tab.setLayout(self.stream_hlayout)
-    
+
         # Group Tab
         self.group_hlayout = QHBoxLayout()
         self.group_btn_hlayout = QHBoxLayout()
@@ -226,7 +250,7 @@ class P4TemplateEditorDialog(QDialog):
         self.branch_vlayout.addLayout(self.branch_btn_hlayout)
         self.branch_hlayout.addLayout(self.branch_vlayout)
         self.branch_hlayout.addWidget(self.branch_table)
-        
+
         self.branch_view_btn_hlayout.addWidget(self.branch_view_remove_path_btn)
         self.branch_view_btn_hlayout.addWidget(self.branch_view_add_path_btn)
         self.branch_view_vlayout.addWidget(self.branch_view_table)
@@ -235,6 +259,16 @@ class P4TemplateEditorDialog(QDialog):
         self.branch_vlayout_main.addLayout(self.branch_hlayout)
         self.branch_vlayout_main.addLayout(self.branch_view_vlayout)
         self.branch_tab.setLayout(self.branch_vlayout_main)
+
+        # Protection Tab
+        self.tag_btn_hlayout = QHBoxLayout()
+        self.tag_vlayout = QVBoxLayout()
+
+        self.tag_btn_hlayout.addWidget(self.remove_tag_btn)
+        self.tag_btn_hlayout.addWidget(self.add_tag_btn)
+        self.tag_vlayout.addWidget(self.tag_table)
+        self.tag_vlayout.addLayout(self.tag_btn_hlayout)
+        self.tag_tab.setLayout(self.tag_vlayout)
 
         # Main Layout
         self.main_layout = QVBoxLayout()
@@ -251,6 +285,7 @@ class P4TemplateEditorDialog(QDialog):
         self.main_tab_widget.addTab(self.protection_tab, "Protections")
         self.main_tab_widget.addTab(self.typemap_tab, "Typemap")
         self.main_tab_widget.addTab(self.branch_tab, "Branches")
+        self.main_tab_widget.addTab(self.tag_tab, "Tags")
         self.main_layout.addWidget(self.template_cbox)
         self.main_layout.addWidget(self.main_tab_widget)
         self.main_layout.addLayout(self.main_btn_row)
@@ -263,13 +298,13 @@ class P4TemplateEditorDialog(QDialog):
 
     def add_mock_data(self):
         self.defaults = {
-            'depot': {
-                'name' : 'None',
-                'type' : 'stream',
-                'depth' : '1',
-                'user' : 'None',
+            "depot": {
+                "name": "None",
+                "type": "stream",
+                "depth": "1",
+                "user": "None",
             },
-            'group': {
+            "group": {
                 "name": "None",
                 "description": "",
                 "max_results": "unset",
@@ -280,48 +315,38 @@ class P4TemplateEditorDialog(QDialog):
                 "password_timeout": "unset",
                 "subgroups": "",
                 "owners": "",
-                "users": ""
+                "users": "",
             },
-            'user': {
-                'name': '',
-                'email': '',
-                'full_name': '',
-                'auth_method': '', 
-                'reviews': '', 
-                'job_view' : ''
+            "user": {
+                "name": "",
+                "email": "",
+                "full_name": "",
+                "auth_method": "",
+                "reviews": "",
+                "job_view": "",
             },
-            'stream': {
-                'name': '', 
-                'type': 'mainline', 
-                'depot': '', 
-                'user': os.getenv("P4USER"), 
-                'view': 'inherit', 
-                'parent': '', 
-                'options': "allsubmit unlocked notoparent nofromparent mergedown"
+            "stream": {
+                "name": "",
+                "type": "mainline",
+                "depot": "",
+                "user": os.getenv("P4USER"),
+                "view": "inherit",
+                "parent": "",
+                "options": "allsubmit unlocked notoparent nofromparent mergedown",
             },
-            'protection': {
-                'access': '', 
-                'type': '', 
-                'name': '', 
-                'host': '*', 
-                'path': '', 
-                'comment': ''
+            "protection": {
+                "access": "",
+                "type": "",
+                "name": "",
+                "host": "*",
+                "path": "",
+                "comment": "",
             },
-            'branch': {
-                'name': '',
-                'owner': '',
-                'options': 'unlocked'
-            }
+            "branch": {"name": "", "owner": "", "options": "unlocked"},
         }
 
         self.current_template_data = {
-            "depots": [
-                {
-                    "name": "unreal_test_depot",
-                    "type": "stream",
-                    "depth": "1"
-                }
-            ],
+            "depots": [{"name": "unreal_test_depot", "type": "stream", "depth": "1"}],
             "groups": [
                 {
                     "name": "unreal_test_group",
@@ -333,64 +358,50 @@ class P4TemplateEditorDialog(QDialog):
                     "timeout": "43200",
                     "password_timeout": "unset",
                     "subgroups": "",
-                    "owners": [
-                        "rmaffesoli"
-                    ],
-                    "users": [
-                        "rmaffesoli",
-                        "test_dude"
-                    ]
+                    "owners": ["rmaffesoli"],
+                    "users": ["rmaffesoli", "test_dude"],
                 }
             ],
             "streams": [
-                {
-                    "depot": "unreal_test_depot",
-                    "name": "unreal_test_main"
-                },
+                {"depot": "unreal_test_depot", "name": "unreal_test_main"},
                 {
                     "depot": "unreal_test_depot",
                     "name": "unreal_test_dev",
                     "type": "development",
-                    "parent": "unreal_test_main"
+                    "parent": "unreal_test_main",
                 },
                 {
                     "depot": "unreal_test_depot",
                     "name": "unreal_test_approval",
                     "type": "development",
-                    "parent": "unreal_test_main"
+                    "parent": "unreal_test_main",
                 },
                 {
                     "depot": "unreal_test_depot",
                     "name": "unreal_test_dev_2",
                     "type": "development",
                     "parent": "unreal_test_approval",
-                    "ignored": [
-                        "*.pyc", 
-                        ".gitignore", 
-                        "/things_i_hate/..."
-                    ]
+                    "ignored": ["*.pyc", ".gitignore", "/things_i_hate/..."],
                 },
                 {
                     "depot": "unreal_test_depot",
                     "name": "unreal_test_task",
                     "type": "task",
-                    "parent": "unreal_test_dev"
+                    "parent": "unreal_test_dev",
                 },
                 {
                     "depot": "unreal_test_depot",
                     "name": "unreal_test_dev_virtual",
                     "type": "virtual",
                     "parent": "unreal_test_dev_2",
-                    "paths": [
-                        "share ..."
-                    ]
-                }
+                    "paths": ["share ..."],
+                },
             ],
             "users": [
                 {
                     "name": "test_dude",
-                    "email":"test1@dude.com",
-                    "full_name": "test dude"
+                    "email": "test1@dude.com",
+                    "full_name": "test dude",
                 }
             ],
             "protections": [
@@ -400,19 +411,17 @@ class P4TemplateEditorDialog(QDialog):
                     "name": "unreal_test_group",
                     "host": "*",
                     "path": "//unreal_test_depot/...",
-                    "comment": "auto generated"
+                    "comment": "auto generated",
                 }
             ],
             "branches": [
                 {
                     "name": "unreal_demo_populate",
-                    "options": [
-                        "unlocked"
-                    ],
+                    "options": ["unlocked"],
                     "view": {
                         "//populate_demo/main/old_project/...": "//unreal_test_depot/unreal_test_main/new_project/...",
-                        "//populate_demo/main/old_project/old_project.py": "//unreal_test_depot/unreal_test_main/new_project/new_project.py"
-                    }
+                        "//populate_demo/main/old_project/old_project.py": "//unreal_test_depot/unreal_test_main/new_project/new_project.py",
+                    },
                 }
             ],
             "types": {
@@ -423,14 +432,9 @@ class P4TemplateEditorDialog(QDialog):
                     "//....app",
                     "//....dylib",
                     "//....stub",
-                    "//....ipa"
+                    "//....ipa",
                 ],
-                "binary+l": [
-                    "//....uasset",
-                    "//....umap",
-                    "//....upk",
-                    "//....udk"
-                ],
+                "binary+l": ["//....uasset", "//....umap", "//....upk", "//....udk"],
                 "binary": [
                     "//....bmp",
                     "//....png",
@@ -438,8 +442,8 @@ class P4TemplateEditorDialog(QDialog):
                     "//....raw",
                     "//....r16",
                     "//....mb",
-                    "//....fbx"
-                ], 
+                    "//....fbx",
+                ],
                 "text": [
                     "//....ini",
                     "//....config",
@@ -449,110 +453,218 @@ class P4TemplateEditorDialog(QDialog):
                     "//....cs",
                     "//....m",
                     "//....mm",
-                    "//....py"        
-                ]
-            }
+                    "//....py",
+                ],
+            },
+            "tags": {
+                "USER": "rmaffesoli",
+                "PROJECT": "p4temp",
+                "VERTICAL": "commercials",
+            },
         }
- 
+
         # Template Selection Combo Box
-        self.template_cbox.addItem('Unreal')
-        self.template_cbox.addItem('Unity')
-        self.template_cbox.addItem('Add New Base Template...')
-        
+        self.template_cbox.addItem("Unreal")
+        self.template_cbox.addItem("Unity")
+        self.template_cbox.addItem("Add New Base Template...")
+
         # Depots
-        if self.current_template_data['depots']:
-            for depot in self.current_template_data['depots']:
-                self.depot_list.addItem(depot['name'])
+        if self.current_template_data["depots"]:
+            for depot in self.current_template_data["depots"]:
+                self.depot_list.addItem(depot["name"])
             self.depot_list.setCurrentRow(0)
 
-            for i, key in enumerate(['name', 'type', 'depth', 'user']):
+            for i, key in enumerate(["name", "type", "depth", "user"]):
                 key_item = QTableWidgetItem(key.capitalize())
                 key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
                 self.depot_table.setItem(i, 0, key_item)
-                self.depot_table.setItem(i, 1, QTableWidgetItem(convert_to_string(self.current_template_data['depots'][0].get(key, self.defaults['depot'][key]))))
+                self.depot_table.setItem(
+                    i,
+                    1,
+                    QTableWidgetItem(
+                        convert_to_string(
+                            self.current_template_data["depots"][0].get(
+                                key, self.defaults["depot"][key]
+                            )
+                        )
+                    ),
+                )
 
         # Groups
-        if self.current_template_data['groups']:
-            for group in self.current_template_data['groups']:
-                self.group_list.addItem(group['name'])
+        if self.current_template_data["groups"]:
+            for group in self.current_template_data["groups"]:
+                self.group_list.addItem(group["name"])
             self.group_list.setCurrentRow(0)
 
-        for i, key in enumerate(['name', 'description', 'max_results', 'max_scan_rows','max_lock_time', 'max_open_files', 'timeout', 'password_timeout', 'subgroups', 'owners', 'users']):
-                key_item = QTableWidgetItem(key.capitalize())
-                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
-                self.group_table.setItem(i, 0, key_item)
-                self.group_table.setItem(i, 1, QTableWidgetItem(convert_to_string(self.current_template_data['groups'][0].get(key, self.defaults['group'][key]), ', ')))
+        for i, key in enumerate(
+            [
+                "name",
+                "description",
+                "max_results",
+                "max_scan_rows",
+                "max_lock_time",
+                "max_open_files",
+                "timeout",
+                "password_timeout",
+                "subgroups",
+                "owners",
+                "users",
+            ]
+        ):
+            key_item = QTableWidgetItem(key.capitalize())
+            key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+            self.group_table.setItem(i, 0, key_item)
+            self.group_table.setItem(
+                i,
+                1,
+                QTableWidgetItem(
+                    convert_to_string(
+                        self.current_template_data["groups"][0].get(
+                            key, self.defaults["group"][key]
+                        ),
+                        ", ",
+                    )
+                ),
+            )
 
         # Users
-        if self.current_template_data['users']:
-            for user in self.current_template_data['users']:
-                self.user_list.addItem(user['name'])
+        if self.current_template_data["users"]:
+            for user in self.current_template_data["users"]:
+                self.user_list.addItem(user["name"])
 
             self.user_list.setCurrentRow(0)
 
-            for i, key in enumerate(['name', 'email', 'full_name', 'auth_method', 'reviews', 'job_view']):
+            for i, key in enumerate(
+                ["name", "email", "full_name", "auth_method", "reviews", "job_view"]
+            ):
                 key_item = QTableWidgetItem(key.capitalize())
                 key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
                 self.user_table.setItem(i, 0, key_item)
-                self.user_table.setItem(i, 1, QTableWidgetItem(convert_to_string(self.current_template_data['users'][0].get(key, self.defaults['user'][key]), ', ')))
+                self.user_table.setItem(
+                    i,
+                    1,
+                    QTableWidgetItem(
+                        convert_to_string(
+                            self.current_template_data["users"][0].get(
+                                key, self.defaults["user"][key]
+                            ),
+                            ", ",
+                        )
+                    ),
+                )
 
         # Streams
-        if self.current_template_data['streams']:
-            for stream in self.current_template_data['streams']:
-                self.stream_list.addItem(stream['name'])
+        if self.current_template_data["streams"]:
+            for stream in self.current_template_data["streams"]:
+                self.stream_list.addItem(stream["name"])
 
             self.stream_list.setCurrentRow(0)
 
-            for i, key in enumerate(['name', 'type', 'depot', 'user', 'view', 'parent', 'options']):
+            for i, key in enumerate(
+                ["name", "type", "depot", "user", "view", "parent", "options"]
+            ):
                 key_item = QTableWidgetItem(key.capitalize())
                 key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
                 self.stream_table.setItem(i, 0, key_item)
-                self.stream_table.setItem(i, 1, QTableWidgetItem(convert_to_string(self.current_template_data['streams'][0].get(key, self.defaults['stream'][key]), ' ')))
+                self.stream_table.setItem(
+                    i,
+                    1,
+                    QTableWidgetItem(
+                        convert_to_string(
+                            self.current_template_data["streams"][0].get(
+                                key, self.defaults["stream"][key]
+                            ),
+                            " ",
+                        )
+                    ),
+                )
 
         # Protections
-        if self.current_template_data['protections']:
-            for protection in self.current_template_data['protections']:
-                self.protection_list.addItem(protection['name'])
+        if self.current_template_data["protections"]:
+            for protection in self.current_template_data["protections"]:
+                self.protection_list.addItem(protection["name"])
 
             self.protection_list.setCurrentRow(0)
 
-            for i, key in enumerate(['access', 'type', 'name', 'host', 'path', 'comment']):
+            for i, key in enumerate(
+                ["access", "type", "name", "host", "path", "comment"]
+            ):
                 key_item = QTableWidgetItem(key.capitalize())
                 key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
                 self.protection_table.setItem(i, 0, key_item)
-                self.protection_table.setItem(i, 1, QTableWidgetItem(convert_to_string(self.current_template_data['protections'][0].get(key, self.defaults['protection'][key]), ' ')))
+                self.protection_table.setItem(
+                    i,
+                    1,
+                    QTableWidgetItem(
+                        convert_to_string(
+                            self.current_template_data["protections"][0].get(
+                                key, self.defaults["protection"][key]
+                            ),
+                            " ",
+                        )
+                    ),
+                )
 
         # Types
-        if self.current_template_data['types']:
-            sorted_types = sorted(self.current_template_data['types'].keys())
+        if self.current_template_data["types"]:
+            sorted_types = sorted(self.current_template_data["types"].keys())
             for typemap in sorted_types:
                 self.typemap_type_list.addItem(typemap)
 
             self.typemap_type_list.setCurrentRow(0)
 
-            for type_path in self.current_template_data['types'][sorted_types[0]]:
+            for type_path in self.current_template_data["types"][sorted_types[0]]:
                 self.typemap_path_list.addItem(type_path)
 
         # Branches
-        if self.current_template_data['branches']:
-            for branch in self.current_template_data['branches']:
-                self.branch_list.addItem(branch['name'])
+        if self.current_template_data["branches"]:
+            for branch in self.current_template_data["branches"]:
+                self.branch_list.addItem(branch["name"])
 
             self.branch_list.setCurrentRow(0)
 
-            for i, key in enumerate(['name', 'owner', 'options']):
+            for i, key in enumerate(["name", "owner", "options"]):
                 key_item = QTableWidgetItem(key.capitalize())
                 key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
                 self.branch_table.setItem(i, 0, key_item)
-                self.branch_table.setItem(i, 1, QTableWidgetItem(convert_to_string(self.current_template_data['branches'][0].get(key, self.defaults['branch'][key]))))
+                self.branch_table.setItem(
+                    i,
+                    1,
+                    QTableWidgetItem(
+                        convert_to_string(
+                            self.current_template_data["branches"][0].get(
+                                key, self.defaults["branch"][key]
+                            )
+                        )
+                    ),
+                )
 
-            for i, item in enumerate(self.current_template_data['branches'][0]['view'].items()):
+            for i, item in enumerate(
+                self.current_template_data["branches"][0]["view"].items()
+            ):
 
                 self.branch_view_table.setItem(i, 0, QTableWidgetItem(item[0]))
                 self.branch_view_table.setItem(i, 1, QTableWidgetItem(item[1]))
 
+        # Tags
+        if self.current_template_data["tags"]:
+            self.tag_table.setRowCount(len(self.current_template_data["tags"]))
+            for i, key in enumerate(self.current_template_data["tags"].keys()):
+                key_item = QTableWidgetItem(key.upper())
+                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+                self.tag_table.setItem(i, 0, key_item)
+                self.tag_table.setItem(
+                    i,
+                    1,
+                    QTableWidgetItem(
+                        convert_to_string(
+                            self.current_template_data["tags"].get(key, "None")
+                        )
+                    ),
+                )
 
-def convert_to_string(input, delimiter=' '):
+
+def convert_to_string(input, delimiter=" "):
     if isinstance(input, str):
         return input
     elif isinstance(input, (list, set, tuple)):
@@ -560,6 +672,7 @@ def convert_to_string(input, delimiter=' '):
     else:
         return str(input)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app = QApplication([])
-    P4TemplateEditorDialog() 
+    P4TemplateEditorDialog()

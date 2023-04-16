@@ -46,20 +46,20 @@ def read_json(json_path):
 
 
 def process_template(template):
-    
+
     append_new_typemap_entry(template.get("types", {}))
-    
+
     append_new_protections(template.get("protections", []))
 
-    for user in template.get("users", []): 
+    for user in template.get("users", []):
         create_user(
-            name=user['name'],
-            email=user['email'],
-            full_name=user.get('full_name', ''),
-            job_view=user.get('job_view', ''),
-            auth_method=user.get('auth_method', ''),
-            reviews=user.get('reviews', ''),
-    )
+            name=user["name"],
+            email=user["email"],
+            full_name=user.get("full_name", ""),
+            job_view=user.get("job_view", ""),
+            auth_method=user.get("auth_method", ""),
+            reviews=user.get("reviews", ""),
+        )
 
     for depot in template.get("depots", []):
         create_depot(
@@ -98,20 +98,17 @@ def process_template(template):
             ignored=stream.get("ignored", ""),
         )
 
-    for branch in template.get('branches', []):
+    for branch in template.get("branches", []):
         create_branch(
-            branch_name=branch['name'],
-            view=branch['view'],
+            branch_name=branch["name"],
+            view=branch["view"],
             options=branch.get("options", ["unlocked"]),
             owner=branch.get("owner", os.getenv("P4USER")),
         )
-        
-        populate_branch(branch['name'])
 
-        delete_branch(branch['name'])
+        populate_branch(branch["name"])
 
-
-
+        delete_branch(branch["name"])
 
 
 def get_template_preset(preset_name, template_lut_path="preset_templates.json"):
