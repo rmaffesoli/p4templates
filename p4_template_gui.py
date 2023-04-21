@@ -278,6 +278,7 @@ class P4TemplateEditorDialog(QDialog):
         self.main_btn_row.addWidget(self.btn_save)
         self.main_btn_row.addWidget(self.btn_run)
 
+        self.main_tab_widget.addTab(self.tag_tab, "Parameters")
         self.main_tab_widget.addTab(self.depot_tab, "Depots")
         self.main_tab_widget.addTab(self.stream_tab, "Streams")
         self.main_tab_widget.addTab(self.group_tab, "Groups")
@@ -285,7 +286,6 @@ class P4TemplateEditorDialog(QDialog):
         self.main_tab_widget.addTab(self.protection_tab, "Protections")
         self.main_tab_widget.addTab(self.typemap_tab, "Typemap")
         self.main_tab_widget.addTab(self.branch_tab, "Branches")
-        self.main_tab_widget.addTab(self.tag_tab, "Tags")
         self.main_layout.addWidget(self.template_cbox)
         self.main_layout.addWidget(self.main_tab_widget)
         self.main_layout.addLayout(self.main_btn_row)

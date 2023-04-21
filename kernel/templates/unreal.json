@@ -50,8 +50,8 @@
       "type": "development",
       "parent": "unreal_test_approval",
       "ignored": [
-        "*.pyc", 
-        ".gitignore", 
+        "*.pyc",
+        ".gitignore",
         "/things_i_hate/..."
       ]
     },
@@ -124,7 +124,7 @@
         "//....r16",
         "//....mb",
         "//....fbx"
-    ], 
+    ],
     "text": [
         "//....ini",
         "//....config",
@@ -134,8 +134,12 @@
         "//....cs",
         "//....m",
         "//....mm",
-        "//....py"        
+        "//....py"
     ]
-  }
+  },
+  "tags": {
+      "USER": "rmaffesoli",
+      "PROJECT": "p4temp",
+      "VERTICAL": "commercials"
+  },
 }
- 

@@ -67,7 +67,7 @@
       "name": "test_dude",
       "email":"test1@dude.com",
       "full_name": [
-        "test", 
+        "test",
         "dude"
       ]
     }
@@ -154,8 +154,10 @@
       "//....bik",
       "//....upk"
     ]
-  }
+  },
+  "tags": {
+      "USER": "rmaffesoli",
+      "PROJECT": "p4temp",
+      "VERTICAL": "commercials"
+  },
 }
- 
-
-

@@ -7,6 +7,7 @@ from __future__ import print_function
 import argparse
 import json
 import os
+import re
 
 from create_depot import create_depot
 from create_stream import create_stream
@@ -118,6 +119,11 @@ def get_template_preset(preset_name, template_lut_path="preset_templates.json"):
         template_lut = read_json(template_lut_path)
 
     return template_lut.get(parsed_args.name, "")
+
+
+def gather_parameters(input, found_parameters=None):
+    found_parameters = found_parameters or set()
+    param_pattern = re.pattern("({[^{}]*})")
 
 
 if __name__ == "__main__":
