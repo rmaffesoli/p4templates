@@ -22,7 +22,21 @@ If you have a specifc template predefined you can use the -n --name option that 
 python ./process_template -n unreal
 ```
 
-To load the GUI, which is currently a non operational work in progress.
+If you are using parameter tags in your template you can use the -p,--parameter flag to input these values for processing. 
+The syntax is as follows with a ':' acting a string delimiter between the key and value. 
+Any number of parameters may be passed in separated by a space.
+For instance if your template uses the parameters 'project' and 'dept' you would use the following syntax to pass the substitutions into the cli utility. 
+Within your json file the syntax for parameters is to use curly braces to identify parameter values. 
+For example: 
+`{"name": "{project}_mainline"}`
+
+```bash
+python ./process_template -n unreal -p project:demo dept:3D
+```
+
+To load the editor GUI use the folowing command.
+TO NOTE: This is currently a non operational work in progress. The readme will be updated when this is ready for use. In the mean time editing and processing can proceed by using yuor favorite text editor to create the json templates and the above cli for processing. 
+
 ```bash
 python ./p4_template_gui.py
 ```
