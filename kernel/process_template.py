@@ -124,7 +124,7 @@ if __name__ == "__main__":
     if not needed_parameters.issubset(set(given_parameters.keys())):
         print(
             'Could not proceed. Not all needed parameters for the provided template have given values.', 
-            'The missing parameter keys are:\n',
+            '\nThe missing parameter keys are:',
         )
         [print(_) for _ in needed_parameters if _ not in given_parameters.keys()]
     else:
