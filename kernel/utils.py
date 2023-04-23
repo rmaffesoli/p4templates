@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import json
 import re
+import os
 
 
 def set_default(obj):
@@ -54,11 +55,25 @@ def substitute_parameters(template, parameters):
     template = json.loads(template)
     return template
 
-    
+
+def gather_existing_template_names(template_folder_path):
+    template_lut = {}
+    if os.path.isdir(template_folder_path):
+        for dir_name, _, files in os.walk(template_folder_path):
+            files = [_ for _ in files if _.lower().endswith('.json')]
+            for template_file in files:
+                identifier = template_file.replace('.json', '')
+                print(os.path.join(dir_name, template_file))
+                template_data = read_json(os.path.join(dir_name, template_file))
+                template_name = template_data.get('name', '')
+                
+                if template_name:
+                    identifier = template_name
+                
+                template_lut[identifier] = os.path.join(dir_name, template_file)
+
+    return template_lut
+
 
 if __name__ == "__main__":
-    input = read_json(r"C:\repos\p4_templates\kernel\templates\unreal.json")
-    # params = gather_parameters(input)
-    # print(params)
-    replacement = substitute_parameters(input, {"project": "hoodrat"})
-    print(replacement)
+    print(gather_existing_template_names(r"C:\repos\p4_templates\kernel\templates"))

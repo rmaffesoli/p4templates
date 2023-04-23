@@ -1,4 +1,5 @@
 {
+  "name": "default_unreal_template",
   "depots": [
     {
       "name": "{project}_depot",

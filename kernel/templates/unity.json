@@ -1,4 +1,5 @@
 {
+  "name": "default_unity_template",
   "depots": [
     {
       "name": "unity_test_depot",
@@ -154,10 +155,5 @@
       "//....bik",
       "//....upk"
     ]
-  },
-  "tags": {
-      "USER": "rmaffesoli",
-      "PROJECT": "p4temp",
-      "VERTICAL": "commercials"
-  },
+  }
 }

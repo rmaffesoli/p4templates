@@ -14,7 +14,7 @@ from create_user import create_user
 from create_branch import create_branch, populate_branch, delete_branch
 from edit_permissions import append_new_protections
 from edit_typemap import append_new_typemap_entry
-from utils import set_default, write_json, read_json, gather_parameters, substitute_parameters
+from utils import set_default, write_json, read_json, gather_parameters, substitute_parameters, gather_existing_template_names
 
 
 def process_template(template):
@@ -83,12 +83,8 @@ def process_template(template):
         delete_branch(branch["name"])
 
 
-def get_template_preset(preset_name, template_lut_path="preset_templates.json"):
-    template_lut = {}
-
-    if os.path.isfile(template_lut_path):
-        template_lut = read_json(template_lut_path)
-
+def get_template_preset(preset_name, template_folder="./templates"):
+    template_lut = gather_existing_template_names(template_folder)
     return template_lut.get(parsed_args.name, "")
 
 
@@ -113,22 +109,23 @@ if __name__ == "__main__":
     if template_filename and os.path.isfile(template_filename):
         template = read_json(template_filename)
     
-    given_parameters = {}
-    if parsed_args.parameters:
-        for pairing in parsed_args.parameters:
-            key, value = pairing.split(':')
-            given_parameters[key] = value
+    if template:
+        given_parameters = {}
+        if parsed_args.parameters:
+            for pairing in parsed_args.parameters:
+                key, value = pairing.split(':')
+                given_parameters[key] = value
 
-    needed_parameters = gather_parameters(template)
+        needed_parameters = gather_parameters(template)
 
-    if not needed_parameters.issubset(set(given_parameters.keys())):
-        print(
-            'Could not proceed. Not all needed parameters for the provided template have given values.', 
-            '\nThe missing parameter keys are:',
-        )
-        [print(_) for _ in needed_parameters if _ not in given_parameters.keys()]
-    else:
-        template = substitute_parameters(template, given_parameters)
-        print('Processing template:', template_filename)
-        print(given_parameters)
-        process_template(template)
+        if not needed_parameters.issubset(set(given_parameters.keys())):
+            print(
+                'Could not proceed. Not all needed parameters for the provided template have given values.', 
+                '\nThe missing parameter keys are:',
+            )
+            [print(_) for _ in needed_parameters if _ not in given_parameters.keys()]
+        else:
+            template = substitute_parameters(template, given_parameters)
+            print('Processing template:', template_filename)
+            print(given_parameters)
+            process_template(template)
