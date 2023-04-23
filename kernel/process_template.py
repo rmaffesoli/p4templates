@@ -83,7 +83,7 @@ def process_template(template):
         delete_branch(branch["name"])
 
 
-def get_template_preset(preset_name, template_folder="./templates"):
+def get_template_preset(preset_name, template_folder="../templates"):
     template_lut = gather_existing_template_names(template_folder)
     return template_lut.get(parsed_args.name, "")
 

@@ -664,6 +664,75 @@ class P4TemplateEditorDialog(QDialog):
                 )
 
 
+
+class P4TemplateLoaderDialog(QDialog):
+    def __init__(self, parent=None):
+        super(P4TemplateLoaderDialog, self).__init__(parent)
+        self.create_ui_elements()
+        self.add_mock_data()
+        self.add_ui_elements_to_layout()
+        self.set_window_settings()
+        self.exec()
+
+    def create_ui_elements(self):
+        self.template_cbox = QComboBox()
+
+        self.btn_new = QPushButton("New")
+        self.btn_edit = QPushButton("Edit")
+        self.btn_run = QPushButton("Run")
+
+        self.parameter_table = QTableWidget()
+        self.parameter_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
+        self.parameter_table.horizontalHeader().setVisible(False)
+        self.parameter_table.verticalHeader().setVisible(False)
+        self.parameter_table.setColumnCount(2)
+        
+    
+    def add_mock_data(self):
+        self.template_cbox.addItem("Unreal")
+        self.template_cbox.addItem("Unity")
+        
+        if self.current_template_data["tags"]:
+            self.tag_table.setRowCount(len(self.current_template_data["tags"]))
+            for i, key in enumerate(self.current_template_data["tags"].keys()):
+                key_item = QTableWidgetItem(key.upper())
+                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+                self.tag_table.setItem(i, 0, key_item)
+                self.tag_table.setItem(
+                    i,
+                    1,
+                    QTableWidgetItem(
+                        convert_to_string(
+                            self.current_template_data["tags"].get(key, "None")
+                        )
+                    ),
+                )
+        self.parameter_table.setRowCount(4)
+
+
+
+    def add_ui_elements_to_layout(self):
+        self.main_layout = QVBoxLayout()
+        
+        self.main_btn_row = QHBoxLayout()
+        self.main_btn_row.addWidget(self.btn_new)
+        self.main_btn_row.addWidget(self.btn_edit)
+        self.main_btn_row.addWidget(self.btn_run)
+        
+        self.main_layout.addWidget(self.template_cbox)
+        self.main_layout.addWidget(self.parameter_table)
+        self.main_layout.addLayout(self.main_btn_row)
+        
+        self.setLayout(self.main_layout)
+
+
+    def set_window_settings(self):
+        self.setWindowTitle("P4 Project Templates")
+        self.setMinimumSize(200, 300)
+
+
 def convert_to_string(input, delimiter=" "):
     if isinstance(input, str):
         return input
@@ -675,4 +744,4 @@ def convert_to_string(input, delimiter=" "):
 
 if __name__ == "__main__":
     app = QApplication([])
-    P4TemplateEditorDialog()
+    P4TemplateLoaderDialog()
