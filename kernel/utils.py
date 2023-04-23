@@ -63,7 +63,6 @@ def gather_existing_template_names(template_folder_path):
             files = [_ for _ in files if _.lower().endswith('.json')]
             for template_file in files:
                 identifier = template_file.replace('.json', '')
-                print(os.path.join(dir_name, template_file))
                 template_data = read_json(os.path.join(dir_name, template_file))
                 template_name = template_data.get('name', '')
                 
@@ -73,7 +72,3 @@ def gather_existing_template_names(template_folder_path):
                 template_lut[identifier] = os.path.join(dir_name, template_file)
 
     return template_lut
-
-
-if __name__ == "__main__":
-    print(gather_existing_template_names(r"C:\repos\p4_templates\kernel\templates"))

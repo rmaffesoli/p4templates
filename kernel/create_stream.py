@@ -54,7 +54,7 @@ def create_stream(
     """create_stream doc string"""
     commands = ["p4", "stream", "-i"]
 
-    if parent_stream is not "none" and "//" not in parent_stream:
+    if parent_stream != "none" and "//" not in parent_stream:
         parent_stream = "/".join(["/", depot_name, parent_stream])
 
     if not options:

@@ -14,7 +14,7 @@ from create_user import create_user
 from create_branch import create_branch, populate_branch, delete_branch
 from edit_permissions import append_new_protections
 from edit_typemap import append_new_typemap_entry
-from utils import set_default, write_json, read_json, gather_parameters, substitute_parameters, gather_existing_template_names
+from utils import read_json, gather_parameters, substitute_parameters, gather_existing_template_names
 
 
 def process_template(template):
@@ -98,7 +98,8 @@ if __name__ == "__main__":
 
     script_dir = os.path.dirname(__file__)
     os.chdir(script_dir)
-
+    
+    template = None
     if parsed_args.template:
         template_filename = parsed_args.template
     elif parsed_args.name:
@@ -129,3 +130,5 @@ if __name__ == "__main__":
             print('Processing template:', template_filename)
             print(given_parameters)
             process_template(template)
+    else:
+        print('Template not found', parsed_args.name, template_filename)
