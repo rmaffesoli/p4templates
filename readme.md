@@ -28,7 +28,7 @@ Any number of parameters may be passed in separated by a space.
 For instance if your template uses the parameters 'project' and 'dept' you would use the following syntax to pass the substitutions into the cli utility. 
 Within your json file the syntax for parameters is to use curly braces to identify parameter values. 
 For example: 
-`{"name": "{project}_mainline"}`
+`{"name": "{project}_{dept}_mainline"}` would result in a streamname of `demo_3D_mainline`
 
 ```bash
 python ./process_template -n unreal -p project:demo dept:3D
