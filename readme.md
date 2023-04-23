@@ -27,8 +27,8 @@ The syntax is as follows with a ':' acting a string delimiter between the key an
 Any number of parameters may be passed in separated by a space.
 For instance if your template uses the parameters 'project' and 'dept' you would use the following syntax to pass the substitutions into the cli utility. 
 Within your json file the syntax for parameters is to use curly braces to identify parameter values. 
-For example: 
-`{"name": "{project}_{dept}_mainline"}` would result in a streamname of `demo_3D_mainline`
+For example a template json string of: 
+`{"streams": [{"depot": "{dept}_depot", "name": "{project}_{dept}_main"}]}` would result in the creation of mainline stream named `demo_3D_main` within the `3D_depot` depot.
 
 ```bash
 python ./process_template -n unreal -p project:demo dept:3D
