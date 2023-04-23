@@ -45,6 +45,22 @@ python ./p4_template_gui.py
 
 The template system utilizes Helix Core's branch mappings and the p4 populate command to duplicate files and folders from one depot position on the server into the new template project. For this to operate correctly I recommend you establish a separate template project depot on your p4d server and then use those boilerplate setups as your duplication source.
 
+For example, in the following snippet we see the branch mapping section from a p4 setup template showing how the view section is defined for file propogation including file renaming.
+ 
+```
+  "branches": [
+    {
+      "name": "{project}_populate",
+      "options": [
+        "unlocked"
+      ],
+      "view": {
+        "//populate_demo/main/old_project/...": "//{project}_depot/{project}_main/new_project/...",
+        "//populate_demo/main/old_project/old_project.py": "//{project}_depot/{project}_main/new_project/new_project.py"
+      }
+    }
+  ],
+```
 
 ## License
 
