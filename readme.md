@@ -40,8 +40,10 @@ TO NOTE: This is currently a non operational work in progress. The readme will b
 ```bash
 python ./p4_template_gui.py
 ```
+
 ## File Population
-    The template system utilizes Helix Core's branch mappings and the p4 populate command to duplicate files and folders from one depot position on the server into the new template project. For this to operate correctly I recommend you establish a separate template project depot on your p4d server and then use those boilerplate setups as your duplication source.
+
+The template system utilizes Helix Core's branch mappings and the p4 populate command to duplicate files and folders from one depot position on the server into the new template project. For this to operate correctly I recommend you establish a separate template project depot on your p4d server and then use those boilerplate setups as your duplication source.
 
 
 ## License
