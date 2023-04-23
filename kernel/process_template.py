@@ -5,9 +5,7 @@
 from __future__ import print_function
 
 import argparse
-import json
 import os
-import re
 
 from create_depot import create_depot
 from create_stream import create_stream
@@ -16,34 +14,7 @@ from create_user import create_user
 from create_branch import create_branch, populate_branch, delete_branch
 from edit_permissions import append_new_protections
 from edit_typemap import append_new_typemap_entry
-
-
-def set_default(obj):
-    """
-    Converts any set to a list type object.
-    """
-    if isinstance(obj, set):
-        return list(obj)
-    return obj
-
-
-def write_json(data_dict, output_path, sort_keys=True):
-    """
-    Writes a dictionary into a json file.
-    """
-    with open(output_path, "w") as outfile:
-        json.dump(
-            data_dict, outfile, default=set_default, indent=4, sort_keys=sort_keys
-        )
-
-
-def read_json(json_path):
-    """
-    Reads a json file in to a dictionary.
-    """
-    with open(json_path) as json_file:
-        data_dict = json.load(json_file)
-    return data_dict
+from utils import set_default, write_json, read_json, gather_parameters, substitute_parameters
 
 
 def process_template(template):
@@ -121,15 +92,11 @@ def get_template_preset(preset_name, template_lut_path="preset_templates.json"):
     return template_lut.get(parsed_args.name, "")
 
 
-def gather_parameters(input, found_parameters=None):
-    found_parameters = found_parameters or set()
-    param_pattern = re.pattern("({[^{}]*})")
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-t", "--template", default="")
     parser.add_argument("-n", "--name", default="")
+    parser.add_argument("-p", "--parameters", nargs='*', default="")
 
     parsed_args = parser.parse_args()
 
@@ -145,5 +112,23 @@ if __name__ == "__main__":
 
     if template_filename and os.path.isfile(template_filename):
         template = read_json(template_filename)
+    
+    given_parameters = {}
+    if parsed_args.parameters:
+        for pairing in parsed_args.parameters:
+            key, value = pairing.split(':')
+            given_parameters[key] = value
 
-    process_template(template)
+    needed_parameters = gather_parameters(template)
+
+    if not needed_parameters.issubset(set(given_parameters.keys())):
+        print(
+            'Could not proceed. Not all needed parameters for the provided template have given values.', 
+            'The missing parameter keys are:\n',
+        )
+        [print(_) for _ in needed_parameters if _ not in given_parameters.keys()]
+    else:
+        template = substitute_parameters(template, given_parameters)
+        print('Processing template:', template_filename)
+        print(given_parameters)
+        process_template(template)

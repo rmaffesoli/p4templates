@@ -1,14 +1,14 @@
 {
   "depots": [
     {
-      "name": "unreal_test_depot",
+      "name": "{project}_depot",
       "type": "stream",
       "depth": "1"
     }
   ],
   "groups": [
     {
-      "name": "unreal_test_group",
+      "name": "{project}_group",
       "description": "A group I'll be making and deleting often.",
       "max_results": "unset",
       "max_scan_rows": "unset",
@@ -29,26 +29,26 @@
   ],
   "streams": [
     {
-      "depot": "unreal_test_depot",
-      "name": "unreal_test_main"
+      "depot": "{project}_depot",
+      "name": "{project}_main"
     },
     {
-      "depot": "unreal_test_depot",
-      "name": "unreal_test_dev",
+      "depot": "{project}_depot",
+      "name": "{project}_dev",
       "type": "development",
-      "parent": "unreal_test_main"
+      "parent": "{project}_main"
     },
     {
-      "depot": "unreal_test_depot",
-      "name": "unreal_test_approval",
+      "depot": "{project}_depot",
+      "name": "{project}_approval",
       "type": "development",
-      "parent": "unreal_test_main"
+      "parent": "{project}_main"
     },
     {
-      "depot": "unreal_test_depot",
-      "name": "unreal_test_dev_2",
+      "depot": "{project}_depot",
+      "name": "{project}_dev_2",
       "type": "development",
-      "parent": "unreal_test_approval",
+      "parent": "{project}_approval",
       "ignored": [
         "*.pyc",
         ".gitignore",
@@ -56,16 +56,16 @@
       ]
     },
     {
-      "depot": "unreal_test_depot",
-      "name": "unreal_test_task",
+      "depot": "{project}_depot",
+      "name": "{project}_task",
       "type": "task",
-      "parent": "unreal_test_dev"
+      "parent": "{project}_dev"
     },
     {
-      "depot": "unreal_test_depot",
-      "name": "unreal_test_dev_virtual",
+      "depot": "{project}_depot",
+      "name": "{project}_dev_virtual",
       "type": "virtual",
-      "parent": "unreal_test_dev_2",
+      "parent": "{project}_dev_2",
       "paths": [
         "share ..."
       ]
@@ -82,21 +82,21 @@
     {
       "access": "write",
       "type": "group",
-      "name": "unreal_test_group",
+      "name": "{project}_group",
       "host": "*",
-      "path": "//unreal_test_depot/...",
+      "path": "//{project}_depot/...",
       "comment": "auto generated"
     }
   ],
   "branches": [
     {
-      "name": "unreal_demo_populate",
+      "name": "{project}_populate",
       "options": [
         "unlocked"
       ],
       "view": {
-        "//populate_demo/main/old_project/...": "//unreal_test_depot/unreal_test_main/new_project/...",
-        "//populate_demo/main/old_project/old_project.py": "//unreal_test_depot/unreal_test_main/new_project/new_project.py"
+        "//populate_demo/main/old_project/...": "//{project}_depot/{project}_main/new_project/...",
+        "//populate_demo/main/old_project/old_project.py": "//{project}_depot/{project}_main/new_project/new_project.py"
       }
     }
   ],
@@ -136,10 +136,5 @@
         "//....mm",
         "//....py"
     ]
-  },
-  "tags": {
-      "USER": "rmaffesoli",
-      "PROJECT": "p4temp",
-      "VERTICAL": "commercials"
-  },
+  }
 }
