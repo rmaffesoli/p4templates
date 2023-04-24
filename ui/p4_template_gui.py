@@ -27,12 +27,10 @@ class P4TemplateEditorDialog(QDialog):
         self.exec()
 
     def create_ui_elements(self):
-        self.btn_save_as = QPushButton("Save as...")
+        self.btn_reload = QPushButton("Reload")
         self.btn_save = QPushButton("Save")
-        self.btn_run = QPushButton("Run")
 
         self.main_tab_widget = QTabWidget()
-        self.template_cbox = QComboBox()
 
         self.depot_tab = QWidget()
 
@@ -136,17 +134,6 @@ class P4TemplateEditorDialog(QDialog):
         self.branch_view_table.verticalHeader().setVisible(False)
         self.branch_view_table.setColumnCount(2)
         self.branch_view_table.setRowCount(2)
-
-        self.tag_tab = QWidget()
-        self.add_tag_btn = QPushButton("+")
-        self.remove_tag_btn = QPushButton("-")
-        self.tag_table = QTableWidget()
-        self.tag_table.horizontalHeader().setSectionResizeMode(
-            QHeaderView.ResizeMode.Stretch
-        )
-        self.tag_table.horizontalHeader().setVisible(False)
-        self.tag_table.verticalHeader().setVisible(False)
-        self.tag_table.setColumnCount(2)
 
     def add_ui_elements_to_layout(self):
 
@@ -260,25 +247,13 @@ class P4TemplateEditorDialog(QDialog):
         self.branch_vlayout_main.addLayout(self.branch_view_vlayout)
         self.branch_tab.setLayout(self.branch_vlayout_main)
 
-        # Protection Tab
-        self.tag_btn_hlayout = QHBoxLayout()
-        self.tag_vlayout = QVBoxLayout()
-
-        self.tag_btn_hlayout.addWidget(self.remove_tag_btn)
-        self.tag_btn_hlayout.addWidget(self.add_tag_btn)
-        self.tag_vlayout.addWidget(self.tag_table)
-        self.tag_vlayout.addLayout(self.tag_btn_hlayout)
-        self.tag_tab.setLayout(self.tag_vlayout)
-
         # Main Layout
         self.main_layout = QVBoxLayout()
 
         self.main_btn_row = QHBoxLayout()
-        self.main_btn_row.addWidget(self.btn_save_as)
+        self.main_btn_row.addWidget(self.btn_reload)
         self.main_btn_row.addWidget(self.btn_save)
-        self.main_btn_row.addWidget(self.btn_run)
-
-        self.main_tab_widget.addTab(self.tag_tab, "Parameters")
+        
         self.main_tab_widget.addTab(self.depot_tab, "Depots")
         self.main_tab_widget.addTab(self.stream_tab, "Streams")
         self.main_tab_widget.addTab(self.group_tab, "Groups")
@@ -286,7 +261,6 @@ class P4TemplateEditorDialog(QDialog):
         self.main_tab_widget.addTab(self.protection_tab, "Protections")
         self.main_tab_widget.addTab(self.typemap_tab, "Typemap")
         self.main_tab_widget.addTab(self.branch_tab, "Branches")
-        self.main_layout.addWidget(self.template_cbox)
         self.main_layout.addWidget(self.main_tab_widget)
         self.main_layout.addLayout(self.main_btn_row)
 
@@ -455,18 +429,8 @@ class P4TemplateEditorDialog(QDialog):
                     "//....mm",
                     "//....py",
                 ],
-            },
-            "tags": {
-                "USER": "rmaffesoli",
-                "PROJECT": "p4temp",
-                "VERTICAL": "commercials",
-            },
+            }
         }
-
-        # Template Selection Combo Box
-        self.template_cbox.addItem("Unreal")
-        self.template_cbox.addItem("Unity")
-        self.template_cbox.addItem("Add New Base Template...")
 
         # Depots
         if self.current_template_data["depots"]:
@@ -646,24 +610,6 @@ class P4TemplateEditorDialog(QDialog):
                 self.branch_view_table.setItem(i, 0, QTableWidgetItem(item[0]))
                 self.branch_view_table.setItem(i, 1, QTableWidgetItem(item[1]))
 
-        # Tags
-        if self.current_template_data["tags"]:
-            self.tag_table.setRowCount(len(self.current_template_data["tags"]))
-            for i, key in enumerate(self.current_template_data["tags"].keys()):
-                key_item = QTableWidgetItem(key.upper())
-                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
-                self.tag_table.setItem(i, 0, key_item)
-                self.tag_table.setItem(
-                    i,
-                    1,
-                    QTableWidgetItem(
-                        convert_to_string(
-                            self.current_template_data["tags"].get(key, "None")
-                        )
-                    ),
-                )
-
-
 
 class P4TemplateLoaderDialog(QDialog):
     def __init__(self, parent=None):
@@ -671,6 +617,7 @@ class P4TemplateLoaderDialog(QDialog):
         self.create_ui_elements()
         self.add_mock_data()
         self.add_ui_elements_to_layout()
+        self.connect_ui()
         self.set_window_settings()
         self.exec()
 
@@ -689,29 +636,29 @@ class P4TemplateLoaderDialog(QDialog):
         self.parameter_table.verticalHeader().setVisible(False)
         self.parameter_table.setColumnCount(2)
         
-    
     def add_mock_data(self):
         self.template_cbox.addItem("Unreal")
         self.template_cbox.addItem("Unity")
         
-        if self.current_template_data["tags"]:
-            self.tag_table.setRowCount(len(self.current_template_data["tags"]))
-            for i, key in enumerate(self.current_template_data["tags"].keys()):
-                key_item = QTableWidgetItem(key.upper())
-                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
-                self.tag_table.setItem(i, 0, key_item)
-                self.tag_table.setItem(
-                    i,
-                    1,
-                    QTableWidgetItem(
-                        convert_to_string(
-                            self.current_template_data["tags"].get(key, "None")
-                        )
-                    ),
-                )
-        self.parameter_table.setRowCount(4)
+        self.gathered_parameters = {
+            'project': '',
+            'dept': '',
+        }
 
-
+        self.parameter_table.setRowCount(len(self.gathered_parameters))
+        for i, key in enumerate(self.gathered_parameters):
+            key_item = QTableWidgetItem(key.upper())
+            key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+            self.parameter_table.setItem(i, 0, key_item)
+            self.parameter_table.setItem(
+                i,
+                1,
+                QTableWidgetItem(
+                    convert_to_string(
+                        self.gathered_parameters.get(key, "")
+                    )
+                ),
+            )
 
     def add_ui_elements_to_layout(self):
         self.main_layout = QVBoxLayout()
@@ -727,11 +674,16 @@ class P4TemplateLoaderDialog(QDialog):
         
         self.setLayout(self.main_layout)
 
-
     def set_window_settings(self):
         self.setWindowTitle("P4 Project Templates")
         self.setMinimumSize(200, 300)
 
+    def connect_ui(self):
+        self.btn_edit.clicked.connect(self._open_editor_gui)
+        self.btn_new.clicked.connect(self._open_editor_gui)
+
+    def _open_editor_gui(self):
+        editor_gui = P4TemplateEditorDialog()
 
 def convert_to_string(input, delimiter=" "):
     if isinstance(input, str):
