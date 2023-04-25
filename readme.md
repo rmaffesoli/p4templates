@@ -13,13 +13,13 @@ To process a specific json template pass in the file path with the -t flag.
 You can find example templates in the `p4_templates/templates` directory. Copy one if these templates, edit to fit your needs, and then process it to add the requested components to your p4d server. To Note: You will need the p4 Permissions level required to complete these actions for the script to succeed.
 
 ```bash
-python ./kernal/process_template.py -t /path/to/template/file.json
+python ./kernel/process_template.py -t /path/to/template/file.json
 ```
 
 If you have a specifc template predefined you can use the -n --name option that corresponds to a key value in the preset_templates.json file
 
 ```bash
-python ./kernal/process_template -n unreal
+python ./kernel/process_template -n unreal
 ```
 
 If you are using parameter tags in your template you can use the -p,--parameter flag to input these values for processing. 
@@ -31,7 +31,7 @@ For example a template json string of:
 `{"streams": [{"depot": "{dept}_depot", "name": "{project}_{dept}_main"}]}` would result in the creation of mainline stream named `demo_3D_main` within the `3D_depot` depot.
 
 ```bash
-python ./kernal/process_template -n unreal -p project:demo dept:3D
+python ./kernel/process_template -n unreal -p project:demo dept:3D
 ```
 
 To load the editor GUI use the folowing command.
