@@ -56,7 +56,16 @@ def substitute_parameters(template, parameters):
     return template
 
 
-def gather_existing_template_names(template_folder_path="../templates"):
+def convert_to_string(input, delimiter=" "):
+    if isinstance(input, str):
+        return input
+    elif isinstance(input, (list, set, tuple)):
+        return delimiter.join(input)
+    else:
+        return str(input)
+
+
+def gather_existing_template_names(template_folder_path="./templates"):
     template_lut = {}
     if os.path.isdir(template_folder_path):
         for dir_name, _, files in os.walk(template_folder_path):
