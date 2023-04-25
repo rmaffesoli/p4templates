@@ -16,6 +16,8 @@ from PyQt6.QtWidgets import (
     QHeaderView,
 )
 
+from p4_templates.kernel.utils import gather_existing_template_names, gather_parameters, read_json, substitute_parameters
+from p4_templates.kernel.process_template import process_template
 
 class P4TemplateEditorDialog(QDialog):
     def __init__(self, parent=None):
@@ -614,11 +616,20 @@ class P4TemplateEditorDialog(QDialog):
 class P4TemplateLoaderDialog(QDialog):
     def __init__(self, parent=None):
         super(P4TemplateLoaderDialog, self).__init__(parent)
+        self.gathered_parameters = {}
+        self.template_path = ''
+        self.template_data = ''
+
+        # UI Setup
         self.create_ui_elements()
-        self.add_mock_data()
         self.add_ui_elements_to_layout()
         self.connect_ui()
         self.set_window_settings()
+        
+        # Data Setup
+        self.update_template_combobox()
+        self.update_parameters_table()
+
         self.exec()
 
     def create_ui_elements(self):
@@ -635,19 +646,42 @@ class P4TemplateLoaderDialog(QDialog):
         self.parameter_table.horizontalHeader().setVisible(False)
         self.parameter_table.verticalHeader().setVisible(False)
         self.parameter_table.setColumnCount(2)
+
+    def update_parameters(self):
+        self.gathered_parameters = {}
+        for row in range(self.parameter_table.rowCount()):
+            try:
+                parameter = self.parameter_table.item(row, 0).text()
+                value = self.parameter_table.item(row, 1).text()
+                self.gathered_parameters[parameter] = value
+            except:
+                pass
         
-    def add_mock_data(self):
-        self.template_cbox.addItem("Unreal")
-        self.template_cbox.addItem("Unity")
-        
-        self.gathered_parameters = {
-            'project': '',
-            'dept': '',
-        }
+        self.validate_parameters()
+
+    def validate_parameters(self):
+        valid = True
+        for _, value in self.gathered_parameters.items():
+            if not value or ' ' in value:
+                valid = False 
+                break
+
+        if valid:
+            self.btn_run.setEnabled(True)
+        else:
+            self.btn_run.setEnabled(False)
+
+    def update_parameters_table(self):
+        while self.parameter_table.rowCount():
+            self.parameter_table.removeRow(0)
+
+        self.template_path = self.existing_template_lut[self.template_cbox.currentText()]
+        self.template_data = read_json(self.template_path)
+        self.gathered_parameters = {_:'' for _ in gather_parameters(self.template_data)}
 
         self.parameter_table.setRowCount(len(self.gathered_parameters))
         for i, key in enumerate(self.gathered_parameters):
-            key_item = QTableWidgetItem(key.upper())
+            key_item = QTableWidgetItem(key)
             key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
             self.parameter_table.setItem(i, 0, key_item)
             self.parameter_table.setItem(
@@ -659,6 +693,13 @@ class P4TemplateLoaderDialog(QDialog):
                     )
                 ),
             )
+
+        self.validate_parameters()
+
+    def update_template_combobox(self):
+        self.existing_template_lut = gather_existing_template_names()
+        for template_name in self.existing_template_lut:
+            self.template_cbox.addItem(template_name)
 
     def add_ui_elements_to_layout(self):
         self.main_layout = QVBoxLayout()
@@ -681,9 +722,19 @@ class P4TemplateLoaderDialog(QDialog):
     def connect_ui(self):
         self.btn_edit.clicked.connect(self._open_editor_gui)
         self.btn_new.clicked.connect(self._open_editor_gui)
+        self.template_cbox.currentTextChanged.connect(self.update_parameters_table)
+        self.parameter_table.cellChanged.connect(self.update_parameters)
+        self.btn_run.clicked.connect(self.process)
 
     def _open_editor_gui(self):
         editor_gui = P4TemplateEditorDialog()
+
+    def process(self):
+        template_data = substitute_parameters(self.template_data, self.gathered_parameters)
+        print('Processing template:')
+        process_template(template_data)
+        print('Finished!')
+
 
 def convert_to_string(input, delimiter=" "):
     if isinstance(input, str):
@@ -695,5 +746,8 @@ def convert_to_string(input, delimiter=" "):
 
 
 if __name__ == "__main__":
+    script_dir = os.path.dirname(__file__)
+    os.chdir(script_dir)
+
     app = QApplication([])
     P4TemplateLoaderDialog()

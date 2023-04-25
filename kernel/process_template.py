@@ -7,14 +7,14 @@ from __future__ import print_function
 import argparse
 import os
 
-from create_depot import create_depot
-from create_stream import create_stream
-from create_group import create_group
-from create_user import create_user
-from create_branch import create_branch, populate_branch, delete_branch
-from edit_permissions import append_new_protections
-from edit_typemap import append_new_typemap_entry
-from utils import read_json, gather_parameters, substitute_parameters, gather_existing_template_names
+from .create_depot import create_depot
+from .create_stream import create_stream
+from .create_group import create_group
+from .create_user import create_user
+from .create_branch import create_branch, populate_branch, delete_branch
+from .edit_permissions import append_new_protections
+from .edit_typemap import append_new_typemap_entry
+from .utils import read_json, gather_parameters, substitute_parameters, gather_existing_template_names
 
 
 def process_template(template):

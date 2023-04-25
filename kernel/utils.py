@@ -41,7 +41,7 @@ def gather_parameters(input, found_parameters=None):
     found_parameters = found_parameters or set()
     matches = re.findall("({[^\{\}\"]*})", input)
     found_parameters = found_parameters.union({_.replace('}','').replace('{','') for _ in matches})
-    return found_parameters
+    return sorted(found_parameters)
 
 
 def substitute_parameters(template, parameters):
@@ -56,7 +56,7 @@ def substitute_parameters(template, parameters):
     return template
 
 
-def gather_existing_template_names(template_folder_path):
+def gather_existing_template_names(template_folder_path="../templates"):
     template_lut = {}
     if os.path.isdir(template_folder_path):
         for dir_name, _, files in os.walk(template_folder_path):

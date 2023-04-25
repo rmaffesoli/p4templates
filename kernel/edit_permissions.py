@@ -50,11 +50,12 @@ def get_protections_table():
         return perm_table_list
 
 
-def add_protection(protections_table, permission):
+def prepend_protection(protections_table, permission):
     if permission not in protections_table:
-        protections_table.append(permission)
+        protections_table.insert(0, permission)
     else:
         print("protection already exists in table:", permission)
+    
     return protections_table
 
 
@@ -88,5 +89,5 @@ def save_protections_table(protections_table):
 def append_new_protections(protections):
     existing_protections = get_protections_table()
     for protection in protections:
-        existing_protections = add_protection(existing_protections, protection)
+        existing_protections = prepend_protection(existing_protections, protection)
     save_protections_table(existing_protections)
