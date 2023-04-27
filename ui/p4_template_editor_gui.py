@@ -20,16 +20,16 @@ class P4TemplateEditorDialog(QDialog):
     def __init__(self, parent=None, template_path=None):
         super(P4TemplateEditorDialog, self).__init__(parent)
         self.template_path = template_path
-
+        self.item_load = True
         self.defaults = {
             "depot": {
-                "name": "None",
+                "name": "",
                 "type": "stream",
                 "depth": "1",
-                "user": "None",
+                "user": "",
             },
             "group": {
-                "name": "None",
+                "name": "",
                 "description": "",
                 "max_results": "unset",
                 "max_scan_rows": "unset",
@@ -71,9 +71,11 @@ class P4TemplateEditorDialog(QDialog):
 
         self.create_ui_elements()        
         self.add_ui_elements_to_layout()
+        self.connect_ui()
         self.set_window_settings()
 
         self.populate_data()
+        self.item_load = False
         self.exec()
 
     def create_ui_elements(self):
@@ -119,7 +121,7 @@ class P4TemplateEditorDialog(QDialog):
         self.remove_stream_paths_btn = QPushButton("-")
 
         self.stream_remapped_tab = QWidget()
-        self.stream_remapped_table = QTableWidget()
+        self.stream_remapped_list = QListWidget()
         self.add_streams_remapped_btn = QPushButton("+")
         self.remove_streams_remapped_btn = QPushButton("-")
 
@@ -192,15 +194,12 @@ class P4TemplateEditorDialog(QDialog):
         self.branch_table.setRowCount(3)
 
         self.branch_view_table = QTableWidget()
-        self.branch_view_add_path_btn = QPushButton("+")
-        self.branch_view_remove_path_btn = QPushButton("-")
         self.branch_view_table.horizontalHeader().setSectionResizeMode(
             QHeaderView.ResizeMode.Stretch
         )
         self.branch_view_table.horizontalHeader().setVisible(False)
         self.branch_view_table.verticalHeader().setVisible(False)
         self.branch_view_table.setColumnCount(2)
-        self.branch_view_table.setRowCount(2)
 
     def add_ui_elements_to_layout(self):
 
@@ -246,7 +245,7 @@ class P4TemplateEditorDialog(QDialog):
         self.stream_remapped_btn_hlayout = QHBoxLayout()
         self.stream_remapped_btn_hlayout.addWidget(self.add_streams_remapped_btn )
         self.stream_remapped_btn_hlayout.addWidget(self.remove_streams_remapped_btn)
-        self.stream_remapped_tab_vlayout.addWidget(self.stream_remapped_table)
+        self.stream_remapped_tab_vlayout.addWidget(self.stream_remapped_list)
         self.stream_remapped_tab_vlayout.addLayout(self.stream_remapped_btn_hlayout)
         self.stream_remapped_tab.setLayout(self.stream_remapped_tab_vlayout) 
         self.stream_view_tab_widget.addTab(self.stream_remapped_tab, "Remapped")
@@ -327,8 +326,6 @@ class P4TemplateEditorDialog(QDialog):
         self.branch_btn_hlayout = QHBoxLayout()
         self.branch_vlayout = QVBoxLayout()
         self.branch_vlayout_main = QVBoxLayout()
-        self.branch_view_btn_hlayout = QHBoxLayout()
-        self.branch_view_vlayout = QVBoxLayout()
 
         self.branch_vlayout.addWidget(self.branch_list)
         self.branch_btn_hlayout.addWidget(self.remove_branch_btn)
@@ -337,13 +334,8 @@ class P4TemplateEditorDialog(QDialog):
         self.branch_hlayout.addLayout(self.branch_vlayout)
         self.branch_hlayout.addWidget(self.branch_table)
 
-        self.branch_view_btn_hlayout.addWidget(self.branch_view_remove_path_btn)
-        self.branch_view_btn_hlayout.addWidget(self.branch_view_add_path_btn)
-        self.branch_view_vlayout.addWidget(self.branch_view_table)
-        self.branch_view_vlayout.addLayout(self.branch_view_btn_hlayout)
-
         self.branch_vlayout_main.addLayout(self.branch_hlayout)
-        self.branch_vlayout_main.addLayout(self.branch_view_vlayout)
+        self.branch_vlayout_main.addWidget(self.branch_view_table)
         self.branch_tab.setLayout(self.branch_vlayout_main)
 
         # Main Layout
@@ -369,189 +361,35 @@ class P4TemplateEditorDialog(QDialog):
         self.setWindowTitle("P4 Template Editor")
         self.setMinimumSize(400, 500)
 
-    def populate_depot_data(self):
-        if self.template_data.get("depots"):
-            for depot in self.template_data["depots"]:
-                self.depot_list.addItem(depot["name"])
-            self.depot_list.setCurrentRow(0)
+    def connect_ui(self):
+        self.depot_list.currentItemChanged.connect(self.reload_selected_depot_data)
+        self.stream_list.currentItemChanged.connect(self.reload_selected_stream_data)
+        self.group_list.currentItemChanged.connect(self.reload_selected_group_data)
+        self.user_list.currentItemChanged.connect(self.reload_selected_user_data)
+        self.protection_list.currentItemChanged.connect(self.reload_selected_protection_data)
+        self.typemap_type_list.currentItemChanged.connect(self.reload_selected_typemap_data)
+        self.branch_list.currentItemChanged.connect(self.reload_selected_branch_data)
 
-            for i, key in enumerate(["name", "type", "depth", "user"]):
-                key_item = QTableWidgetItem(key.capitalize())
-                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
-                self.depot_table.setItem(i, 0, key_item)
-                self.depot_table.setItem(
-                    i,
-                    1,
-                    QTableWidgetItem(
-                        convert_to_string(
-                            self.template_data["depots"][0].get(
-                                key, self.defaults["depot"][key]
-                            )
-                        )
-                    ),
-                )
+        self.add_depot_btn.clicked.connect(self.add_new_depot)
+        self.remove_depot_btn.clicked.connect(self.remove_depot)
 
-    def populate_group_data(self):
-        # Groups
-        if self.template_data.get("groups"):
-            for group in self.template_data["groups"]:
-                self.group_list.addItem(group["name"])
-            self.group_list.setCurrentRow(0)
+        self.add_stream_btn.clicked.connect(self.add_new_stream)
+        self.remove_stream_btn.clicked.connect(self.remove_stream)
 
-            for i, key in enumerate(
-                [
-                    "name",
-                    "description",
-                    "max_results",
-                    "max_scan_rows",
-                    "max_lock_time",
-                    "max_open_files",
-                    "timeout",
-                    "password_timeout",
-                    "subgroups",
-                    "owners",
-                    "users",
-                ]
-            ):
-                key_item = QTableWidgetItem(key.capitalize())
-                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
-                self.group_table.setItem(i, 0, key_item)
-                self.group_table.setItem(
-                    i,
-                    1,
-                    QTableWidgetItem(
-                        convert_to_string(
-                            self.template_data["groups"][0].get(
-                                key, self.defaults["group"][key]
-                            ),
-                            ", ",
-                        )
-                    ),
-                )
+        self.add_group_btn.clicked.connect(self.add_new_group)
+        self.remove_group_btn.clicked.connect(self.remove_group)
 
-    def populate_user_data(self):
-        # Users
-        if self.template_data.get("users"):
-            for user in self.template_data["users"]:
-                self.user_list.addItem(user["name"])
+        self.add_user_btn.clicked.connect(self.add_new_user)
+        self.remove_user_btn.clicked.connect(self.remove_user)
 
-            self.user_list.setCurrentRow(0)
+        self.add_protection_btn.clicked.connect(self.add_new_protection)
+        self.remove_protection_btn.clicked.connect(self.remove_protection)
 
-            for i, key in enumerate(
-                ["name", "email", "full_name", "auth_method", "reviews", "job_view"]
-            ):
-                key_item = QTableWidgetItem(key.capitalize())
-                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
-                self.user_table.setItem(i, 0, key_item)
-                self.user_table.setItem(
-                    i,
-                    1,
-                    QTableWidgetItem(
-                        convert_to_string(
-                            self.template_data["users"][0].get(
-                                key, self.defaults["user"][key]
-                            ),
-                            ", ",
-                        )
-                    ),
-                )
+        self.add_branch_btn.clicked.connect(self.add_new_branch)
+        self.remove_branch_btn.clicked.connect(self.remove_branch)
 
-    def populate_stream_data(self):
-        # Streams
-        if self.template_data.get("streams"):
-            for stream in self.template_data["streams"]:
-                self.stream_list.addItem(stream["name"])
-
-            self.stream_list.setCurrentRow(0)
-
-            for i, key in enumerate(
-                ["name", "type", "depot", "user", "view", "parent", "options"]
-            ):
-                key_item = QTableWidgetItem(key.capitalize())
-                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
-                self.stream_table.setItem(i, 0, key_item)
-                self.stream_table.setItem(
-                    i,
-                    1,
-                    QTableWidgetItem(
-                        convert_to_string(
-                            self.template_data["streams"][0].get(
-                                key, self.defaults["stream"][key]
-                            ),
-                            " ",
-                        )
-                    ),
-                )
-
-    def populate_protection_data(self):
-        # Protections
-        if self.template_data.get("protections"):
-            for protection in self.template_data["protections"]:
-                self.protection_list.addItem(protection["name"])
-
-            self.protection_list.setCurrentRow(0)
-
-            for i, key in enumerate(
-                ["access", "type", "name", "host", "path", "comment"]
-            ):
-                key_item = QTableWidgetItem(key.capitalize())
-                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
-                self.protection_table.setItem(i, 0, key_item)
-                self.protection_table.setItem(
-                    i,
-                    1,
-                    QTableWidgetItem(
-                        convert_to_string(
-                            self.template_data["protections"][0].get(
-                                key, self.defaults["protection"][key]
-                            ),
-                            " ",
-                        )
-                    ),
-                )
-
-    def populate_typemap_data(self):
-        # Types
-        if self.template_data.get("types"):
-            sorted_types = sorted(self.template_data["types"].keys())
-            for typemap in sorted_types:
-                self.typemap_type_list.addItem(typemap)
-
-            self.typemap_type_list.setCurrentRow(0)
-
-            for type_path in self.template_data["types"][sorted_types[0]]:
-                self.typemap_path_list.addItem(type_path)
-
-    def populate_branch_data(self):
-        # Branches
-        if self.template_data.get("branches"):
-            for branch in self.template_data["branches"]:
-                self.branch_list.addItem(branch["name"])
-
-            self.branch_list.setCurrentRow(0)
-
-            for i, key in enumerate(["name", "owner", "options"]):
-                key_item = QTableWidgetItem(key.capitalize())
-                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
-                self.branch_table.setItem(i, 0, key_item)
-                self.branch_table.setItem(
-                    i,
-                    1,
-                    QTableWidgetItem(
-                        convert_to_string(
-                            self.template_data["branches"][0].get(
-                                key, self.defaults["branch"][key]
-                            )
-                        )
-                    ),
-                )
-
-            for i, item in enumerate(
-                self.template_data["branches"][0]["view"].items()
-            ):
-
-                self.branch_view_table.setItem(i, 0, QTableWidgetItem(item[0]))
-                self.branch_view_table.setItem(i, 1, QTableWidgetItem(item[1]))
+        self.branch_view_table.cellChanged.connect(self.update_current_branch_view_data)
+        self.branch_table.cellChanged.connect(self.update_current_branch_data)
 
     def populate_data(self):
         self.template_data = {}
@@ -566,3 +404,486 @@ class P4TemplateEditorDialog(QDialog):
         self.populate_typemap_data()
         self.populate_branch_data()
 
+    # DEPOTS
+    def populate_depot_data(self):
+        self.depot_list.clear()
+        if self.template_data.get("depots"):
+            for depot in self.template_data["depots"]:
+                self.depot_list.addItem(depot["name"])
+            if self.depot_list.count():
+                self.depot_list.setCurrentRow(0)
+
+    def reload_selected_depot_data(self):
+        self.depot_table.clear()
+
+        if not self.template_data.get("depots", []):
+            return
+        
+        depot_index = self.depot_list.currentRow()
+        for i, key in enumerate(["name", "type", "depth", "user"]):
+            key_item = QTableWidgetItem(key.capitalize())
+            key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+            self.depot_table.setItem(i, 0, key_item)
+            self.depot_table.setItem(
+                i,
+                1,
+                QTableWidgetItem(
+                    convert_to_string(
+                        self.template_data["depots"][depot_index].get(
+                            key, self.defaults["depot"][key]
+                        )
+                    )
+                ),
+            )
+
+    def add_new_depot(self):
+        current_depotnames = [_['name'] for _ in self.template_data.get('depots', [])]
+        i = 1 
+        depot_name = 'NewDepot'
+        
+        if depot_name in current_depotnames:
+            while depot_name + str(i) in current_depotnames:
+                i+=1
+            depot_name += str(i)
+        
+        if 'depots' not in self.template_data:
+            self.template_data['depots'] = []
+
+        self.template_data['depots'].append(
+            {'name': depot_name}
+        )
+        self.populate_depot_data()
+
+    def remove_depot(self):
+        if not self.depot_list.currentItem():
+            return
+        
+        depot_name = self.depot_list.currentItem().text()    
+        self.template_data['depots'] = [_ for _ in self.template_data['depots'] if _['name'] != depot_name]
+        self.populate_depot_data()
+
+    # GROUPS
+    def populate_group_data(self):
+        self.group_list.clear()
+        if self.template_data.get("groups"):
+            for group in self.template_data["groups"]:
+                self.group_list.addItem(group["name"])
+            if self.group_list.count():
+                self.group_list.setCurrentRow(0)
+    
+    def reload_selected_group_data(self):
+        self.group_table.clear()
+        group_index = self.group_list.currentRow()
+
+        if not self.template_data.get("groups", []):
+            return
+
+        for i, key in enumerate(
+            [
+                "name",
+                "description",
+                "max_results",
+                "max_scan_rows",
+                "max_lock_time",
+                "max_open_files",
+                "timeout",
+                "password_timeout",
+                "subgroups",
+                "owners",
+                "users",
+            ]
+        ):
+            key_item = QTableWidgetItem(key.capitalize())
+            key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+            self.group_table.setItem(i, 0, key_item)
+            self.group_table.setItem(
+                i,
+                1,
+                QTableWidgetItem(
+                    convert_to_string(
+                        self.template_data["groups"][group_index].get(
+                            key, self.defaults["group"][key]
+                        ),
+                        ", ",
+                    )
+                ),
+            )
+
+    def add_new_group(self):
+        current_groupnames = [_['name'] for _ in self.template_data.get('groups', [])]
+        i = 1 
+        group_name = 'NewGroup'
+        
+        if group_name in current_groupnames:
+            while group_name + str(i) in current_groupnames:
+                i+=1
+            group_name += str(i)
+        
+        if 'groups' not in self.template_data:
+            self.template_data['groups'] = []
+
+        self.template_data['groups'].append(
+            {'name': group_name}
+        )
+        self.populate_group_data()
+
+    def remove_group(self):
+        if not self.group_list.currentItem():
+            return
+        
+        group_name = self.group_list.currentItem().text()    
+        self.template_data['groups'] = [_ for _ in self.template_data['groups'] if _['name'] != group_name]
+        self.populate_group_data()
+
+    # USERS
+    def populate_user_data(self):
+        self.user_list.clear()
+        if self.template_data.get("users"):
+            for user in self.template_data["users"]:
+                self.user_list.addItem(user["name"])
+            if self.user_list.count():
+                self.user_list.setCurrentRow(0)
+
+    def reload_selected_user_data(self):
+        self.user_table.clear()
+        user_index = self.user_list.currentRow()
+
+        if not self.template_data.get("users", []):
+            return
+
+        for i, key in enumerate(
+            ["name", "email", "full_name", "auth_method", "reviews", "job_view"]
+        ):
+            key_item = QTableWidgetItem(key.capitalize())
+            key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+            self.user_table.setItem(i, 0, key_item)
+            self.user_table.setItem(
+                i,
+                1,
+                QTableWidgetItem(
+                    convert_to_string(
+                        self.template_data["users"][user_index].get(
+                            key, self.defaults["user"][key]
+                        ),
+                        ", ",
+                    )
+                ),
+            )    
+
+    def add_new_user(self):
+        current_usernames = [_['name'] for _ in self.template_data.get('users', [])]
+        i = 1 
+        user_name = 'NewUser'
+        
+        if user_name in current_usernames:
+            while user_name + str(i) in current_usernames:
+                i+=1
+            user_name += str(i)
+        
+        if 'users' not in self.template_data:
+            self.template_data['users'] = []
+
+        self.template_data['users'].append(
+            {'name': user_name}
+        )
+        self.populate_user_data()
+
+    def remove_user(self):
+        if not self.user_list.currentItem():
+            return
+        
+        user_name = self.user_list.currentItem().text()    
+        self.template_data['users'] = [_ for _ in self.template_data['users'] if _['name'] != user_name]
+        self.populate_user_data()
+
+    # STREAMS
+    def populate_stream_data(self):
+        self.stream_list.clear()
+        if self.template_data.get("streams"):
+            for stream in self.template_data["streams"]:
+                self.stream_list.addItem(stream["name"])
+            if self.stream_list.count():
+                self.stream_list.setCurrentRow(0)
+
+    def reload_selected_stream_data(self):
+        self.stream_table.clear()
+        self.stream_paths_list.clear()
+        self.stream_remapped_list.clear()
+        self.stream_ignored_list.clear()
+        
+        if not self.template_data.get('streams', []):
+            return
+        
+        stream_index = self.stream_list.currentRow()
+        for i, key in enumerate(
+            ["name", "type", "depot", "user", "view", "parent", "options"]
+        ):
+            key_item = QTableWidgetItem(key.capitalize())
+            key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+            self.stream_table.setItem(i, 0, key_item)
+            self.stream_table.setItem(
+                i,
+                1,
+                QTableWidgetItem(
+                    convert_to_string(
+                        self.template_data["streams"][stream_index].get(
+                            key, self.defaults["stream"][key]
+                        ),
+                        " ",
+                    )
+                ),
+            )
+
+        for path_value in self.template_data["streams"][stream_index].get('paths', []):
+            self.stream_paths_list.addItem(path_value)
+
+
+        for remapped_value in self.template_data["streams"][stream_index].get('remapped', {}):
+            self.stream_remapped_list.addItem(remapped_value)
+
+        for ignored_value in self.template_data["streams"][stream_index].get('ignored', []):
+            self.stream_ignored_list.addItem(ignored_value)
+
+    def add_new_stream(self):
+        current_stream_names = [_['name'] for _ in self.template_data.get('streams', [])]
+        i = 1 
+        stream_name = 'NewStream'
+        
+        if stream_name in current_stream_names:
+            while stream_name + str(i) in current_stream_names:
+                i+=1
+            stream_name += str(i)
+        
+        if 'streams' not in self.template_data:
+            self.template_data['streams'] = []
+
+        self.template_data['streams'].append(
+            {'name': stream_name}
+        )
+        self.populate_stream_data()
+
+    def remove_stream(self):
+        if not self.stream_list.currentItem():
+            return
+        
+        stream_name = self.stream_list.currentItem().text()    
+        self.template_data['streams'] = [_ for _ in self.template_data['streams'] if _['name'] != stream_name]
+        self.populate_stream_data()
+
+    # PROTECTIONS
+    def populate_protection_data(self):
+        self.protection_list.clear()
+        if self.template_data.get("protections"):
+            for protection in self.template_data["protections"]:
+                self.protection_list.addItem(protection["name"])
+            if self.protection_list.count():
+                self.protection_list.setCurrentRow(0)
+
+    def reload_selected_protection_data(self):
+            self.protection_table.clear()
+            protection_index = self.protection_list.currentRow()
+
+            if not self.template_data.get('protections', []):
+                return
+            
+            for i, key in enumerate(
+                ["access", "type", "name", "host", "path", "comment"]
+            ):
+                key_item = QTableWidgetItem(key.capitalize())
+                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+                self.protection_table.setItem(i, 0, key_item)
+                self.protection_table.setItem(
+                    i,
+                    1,
+                    QTableWidgetItem(
+                        convert_to_string(
+                            self.template_data["protections"][protection_index].get(
+                                key, self.defaults["protection"][key]
+                            ),
+                            " ",
+                        )
+                    ),
+                )
+
+    def add_new_protection(self):
+        current_protection_names = [_['name'] for _ in self.template_data.get('protections', [])]
+        i = 1 
+        protection_name = 'NewProtection'
+        
+        if protection_name in current_protection_names:
+            while protection_name + str(i) in current_protection_names:
+                i+=1
+            protection_name += str(i)
+        
+        if 'protections' not in self.template_data:
+            self.template_data['protections'] = []
+
+        self.template_data['protections'].append(
+            {'name': protection_name}
+        )
+        self.populate_protection_data()
+
+    def remove_protection(self):
+        if not self.protection_list.currentItem():
+            return
+        
+        protection_name = self.protection_list.currentItem().text()    
+        self.template_data['protections'] = [_ for _ in self.template_data['protections'] if _['name'] != protection_name]
+        self.populate_protection_data()
+
+    # TYPEMAP
+    def populate_typemap_data(self):
+        # Types
+        if self.template_data.get("types"):
+            sorted_types = sorted(self.template_data["types"].keys())
+            for typemap in sorted_types:
+                self.typemap_type_list.addItem(typemap)
+            self.typemap_type_list.setCurrentRow(0)
+
+    def reload_selected_typemap_data(self):
+            self.typemap_path_list.clear()
+            current_type = self.typemap_type_list.currentItem().text()
+            for type_path in self.template_data["types"][current_type]:
+                self.typemap_path_list.addItem(type_path)
+
+    # BRANCHES
+    def populate_branch_data(self):
+        self.item_load = True
+        self.branch_list.clear()
+        if self.template_data.get("branches"):
+            for branch in self.template_data["branches"]:
+                self.branch_list.addItem(branch["name"])
+            if self.branch_list.count():
+                self.branch_list.setCurrentRow(0)
+        self.item_load = False
+
+    def reload_selected_branch_data(self):
+            self.item_load = True
+            self.branch_table.clear()
+            self.branch_view_table.clear()
+
+            branch_index = self.branch_list.currentRow()
+            if not self.template_data.get('branches', []):
+                return
+            
+            for i, key in enumerate(["name", "owner", "options"]):
+                key_item = QTableWidgetItem(key.capitalize())
+                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+                self.branch_table.setItem(i, 0, key_item)
+                self.branch_table.setItem(
+                    i,
+                    1,
+                    QTableWidgetItem(
+                        convert_to_string(
+                            self.template_data["branches"][branch_index].get(
+                                key, self.defaults["branch"][key]
+                            )
+                        )
+                    ),
+                )
+
+            self.branch_view_table.setRowCount(
+                len(
+                    self.template_data["branches"][branch_index].get("view", {})
+                ) + 1
+            )
+
+            for i, item in enumerate(
+                self.template_data["branches"][branch_index].get("view", {}).items()
+            ):
+
+                self.branch_view_table.setItem(i, 0, QTableWidgetItem(item[0]))
+                self.branch_view_table.setItem(i, 1, QTableWidgetItem(item[1]))
+            self.item_load = False
+
+    def add_new_branch(self):
+        current_branch_names = [_['name'] for _ in self.template_data.get('branches', [])]
+        i = 1 
+        branch_name = 'NewBranch'
+        
+        if branch_name in current_branch_names:
+            while branch_name + str(i) in current_branch_names:
+                i+=1
+            branch_name += str(i)
+        
+        if 'branches' not in self.template_data:
+            self.template_data['branches'] = []
+
+        self.template_data['branches'].append(
+            {'name': branch_name}
+        )
+        self.populate_branch_data()
+
+    def remove_branch(self):
+        if not self.branch_list.currentItem():
+            return
+        
+        branch_name = self.branch_list.currentItem().text()    
+        self.template_data['branches'] = [_ for _ in self.template_data['branches'] if _['name'] != branch_name]
+        self.populate_branch_data()
+
+    def update_current_branch_data(self):
+        if self.item_load:
+            return
+        
+        current_branch_name = self.branch_list.currentItem().text()
+        current_branch = [_ for _ in self.template_data['branches'] if _['name'] == current_branch_name]
+
+        if not current_branch:
+            return
+
+        current_branch = current_branch[0]
+        current_branch_index = self.template_data['branches'].index(current_branch)
+        refresh_list = False
+
+        for i in range(self.branch_table.rowCount()):
+            if not self.branch_table.item(i, 0):
+                continue
+
+            branch_key = self.branch_table.item(i, 0).text().lower()
+            branch_value = '' 
+
+            if self.branch_table.item(i, 1) and self.branch_table.item(i, 1).text():
+                branch_value = self.branch_table.item(i, 1).text()
+
+            if branch_key == 'options':
+                branch_value = branch_value.split(' ')
+
+            if branch_key == 'name' and not branch_value:
+                continue
+
+            if branch_key == 'name' and branch_value != current_branch_name:
+                refresh_list = True
+
+            self.template_data["branches"][current_branch_index][branch_key] = branch_value
+
+        if refresh_list:
+            self.populate_branch_data()
+
+    def update_current_branch_view_data(self):
+        if self.item_load:
+            return
+        current_branch_name = self.branch_list.currentItem().text()
+        
+        current_branch = [_ for _ in self.template_data['branches'] if _['name'] == current_branch_name]
+        if not current_branch:
+            return
+        current_branch = current_branch[0]
+        current_branch_index = self.template_data['branches'].index(current_branch)
+
+        # Views
+        branch_view_dict = {}
+        for i in range(self.branch_view_table.rowCount()):
+            if self.branch_view_table.item(i, 0) and self.branch_view_table.item(i, 0).text():
+                view_value = ''
+                if self.branch_view_table.item(i, 1) and self.branch_view_table.item(i, 1).text():
+                    view_value = self.branch_view_table.item(i, 1).text()
+                branch_view_dict[self.branch_view_table.item(i, 0).text()] = view_value
+    
+        self.template_data['branches'][current_branch_index]['view'] = branch_view_dict
+        
+        self.branch_view_table.setRowCount(
+            len(
+                self.template_data["branches"][current_branch_index].get("view", {})
+            ) + 1
+        )

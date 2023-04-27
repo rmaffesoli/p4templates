@@ -5,6 +5,11 @@
       "name": "unity_test_depot",
       "type": "stream",
       "depth": "1"
+    },
+    {
+      "name": "the_other_guy",
+      "type": "classic",
+      "depth": "2"
     }
   ],
   "groups": [
@@ -18,8 +23,17 @@
         "rmaffesoli",
         "test_dude"
       ]
+    },
+    {
+      "name": "unity_test_group2",
+      "description": "Another group I'll be making and deleting often.",
+      "owners": [
+        "test_dude"
+      ],
+      "users": [
+        "admin"
+      ]
     }
-
   ],
   "streams": [
     {
@@ -44,7 +58,9 @@
       "type": "development",
       "parent": "unity_test_approval",
       "ignored": [
-
+        "*.pyc",
+        ".gitignore",
+        "/things_i_hate/..."
       ]
     },
     {
@@ -71,6 +87,14 @@
         "test",
         "dude"
       ]
+    },
+    {
+      "name": "tester_duder",
+      "email":"test1@duder.com",
+      "full_name": [
+        "tester",
+        "duder"
+      ]
     }
   ],
   "protections": [
@@ -81,11 +105,29 @@
       "host": "*",
       "path": "//unity_test_depot/...",
       "comment": "auto generated"
+    },
+    {
+      "access": "read",
+      "type": "group",
+      "name": "unity_test_group2",
+      "host": "*",
+      "path": "//unity_test_depot/...",
+      "comment": "auto generated"
     }
   ],
   "branches": [
     {
       "name": "unity_demo_populate",
+      "options": [
+        "unlocked"
+      ],
+      "view": {
+        "//populate_demo/main/old_project/...": "//unity_test_depot/unity_test_main/new_project/...",
+        "//populate_demo/main/old_project/old_project.py": "//unity_test_depot/unity_test_main/new_project/new_project.py"
+      }
+    },
+    {
+      "name": "unity_demo_populate2",
       "options": [
         "unlocked"
       ],
