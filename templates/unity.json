@@ -2,7 +2,7 @@
   "name": "default_unity_template",
   "depots": [
     {
-      "name": "unity_test_depot",
+      "name": "{project}_depot",
       "type": "stream",
       "depth": "1"
     },
@@ -14,7 +14,7 @@
   ],
   "groups": [
     {
-      "name": "unity_test_group",
+      "name": "{project}_group",
       "description": "A group I'll be making and deleting often.",
       "owners": [
         "rmaffesoli"
@@ -25,7 +25,7 @@
       ]
     },
     {
-      "name": "unity_test_group2",
+      "name": "{project}_group2",
       "description": "Another group I'll be making and deleting often.",
       "owners": [
         "test_dude"
@@ -37,26 +37,26 @@
   ],
   "streams": [
     {
-      "depot": "unity_test_depot",
-      "name": "unity_test_main"
+      "depot": "{project}_depot",
+      "name": "{project}_main"
     },
     {
-      "depot": "unity_test_depot",
-      "name": "unity_test_dev",
+      "depot": "{project}_depot",
+      "name": "{project}_dev",
       "type": "development",
-      "parent": "unity_test_main"
+      "parent": "{project}_main"
     },
     {
-      "depot": "unity_test_depot",
-      "name": "unity_test_approval",
+      "depot": "{project}_depot",
+      "name": "{project}_approval",
       "type": "development",
-      "parent": "unity_test_main"
+      "parent": "{project}_main"
     },
     {
-      "depot": "unity_test_depot",
-      "name": "unity_test_dev_2",
+      "depot": "{project}_depot",
+      "name": "{project}_dev_2",
       "type": "development",
-      "parent": "unity_test_approval",
+      "parent": "{project}_approval",
       "ignored": [
         "*.pyc",
         ".gitignore",
@@ -64,16 +64,16 @@
       ]
     },
     {
-      "depot": "unity_test_depot",
-      "name": "unity_test_task",
+      "depot": "{project}_depot",
+      "name": "{project}_task",
       "type": "task",
-      "parent": "unity_test_dev"
+      "parent": "{project}_dev"
     },
     {
-      "depot": "unity_test_depot",
-      "name": "unity_test_dev_virtual",
+      "depot": "{project}_depot",
+      "name": "{project}_dev_virtual",
       "type": "virtual",
-      "parent": "unity_test_dev_2",
+      "parent": "{project}_dev_2",
       "paths": [
         "share ..."
       ]
@@ -101,17 +101,17 @@
     {
       "access": "write",
       "type": "group",
-      "name": "unity_test_group",
+      "name": "{project}_group",
       "host": "*",
-      "path": "//unity_test_depot/...",
+      "path": "//{project}_depot/...",
       "comment": "auto generated"
     },
     {
       "access": "read",
       "type": "group",
-      "name": "unity_test_group2",
+      "name": "{project}_group2",
       "host": "*",
-      "path": "//unity_test_depot/...",
+      "path": "//{project}_depot/...",
       "comment": "auto generated"
     }
   ],
@@ -122,8 +122,8 @@
         "unlocked"
       ],
       "view": {
-        "//populate_demo/main/old_project/...": "//unity_test_depot/unity_test_main/new_project/...",
-        "//populate_demo/main/old_project/old_project.py": "//unity_test_depot/unity_test_main/new_project/new_project.py"
+        "//populate_demo/main/old_project/...": "//{project}_depot/{project}_main/new_project/...",
+        "//populate_demo/main/old_project/old_project.py": "//{project}_depot/{project}_main/new_project/new_project.py"
       }
     },
     {
@@ -132,8 +132,8 @@
         "unlocked"
       ],
       "view": {
-        "//populate_demo/main/old_project/...": "//unity_test_depot/unity_test_main/new_project/...",
-        "//populate_demo/main/old_project/old_project.py": "//unity_test_depot/unity_test_main/new_project/new_project.py"
+        "//populate_demo/main/old_project/...": "//{project}_depot/{project}_main/new_project/...",
+        "//populate_demo/main/old_project/old_project.py": "//{project}_depot/{project}_main/new_project/new_project.py"
       }
     }
   ],

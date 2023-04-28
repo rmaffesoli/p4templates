@@ -776,7 +776,6 @@ class P4TemplateEditorDialog(QDialog):
         for path_value in self.template_data["streams"][stream_index].get('paths', []):
             self.stream_paths_list.addItem(path_value)
 
-
         for remapped_value in self.template_data["streams"][stream_index].get('remapped', {}):
             self.stream_remapped_list.addItem(remapped_value)
 
