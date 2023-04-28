@@ -12,15 +12,17 @@ from PyQt6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QHeaderView,
+    QFileDialog,
+    
 )
 
-from p4_templates.kernel.utils import read_json, convert_to_string
+from p4_templates.kernel.utils import read_json, convert_to_string, write_json
 
 class P4TemplateEditorDialog(QDialog):
     def __init__(self, parent=None, template_path=None):
         super(P4TemplateEditorDialog, self).__init__(parent)
         self.template_path = template_path
-        self.item_load = True
+        self.item_load = False
         self.defaults = {
             "depot": {
                 "name": "",
@@ -75,7 +77,6 @@ class P4TemplateEditorDialog(QDialog):
         self.set_window_settings()
 
         self.populate_data()
-        self.item_load = False
         self.exec()
 
     def create_ui_elements(self):
@@ -391,6 +392,19 @@ class P4TemplateEditorDialog(QDialog):
         self.branch_view_table.cellChanged.connect(self.update_current_branch_view_data)
         self.branch_table.cellChanged.connect(self.update_current_branch_data)
 
+        self.depot_table.cellChanged.connect(self.update_current_depot_data)
+        
+        self.group_table.cellChanged.connect(self.update_current_group_data)
+        
+        self.user_table.cellChanged.connect(self.update_current_user_data)
+        
+        self.stream_table.cellChanged.connect(self.update_current_stream_data)
+        
+        self.protection_table.cellChanged.connect(self.update_current_protection_data)
+
+        self.btn_save.clicked.connect(self.save_data)
+        self.btn_reload.clicked.connect(self.populate_data)
+        
     def populate_data(self):
         self.template_data = {}
         if self.template_path and os.path.isfile(self.template_path):
@@ -404,16 +418,26 @@ class P4TemplateEditorDialog(QDialog):
         self.populate_typemap_data()
         self.populate_branch_data()
 
+    def save_data(self):
+        file_name, _ = QFileDialog.getSaveFileName(self, 
+            "Save File", self.template_path, "Text Files(*.json)")
+        print(file_name)
+        if file_name:
+            write_json(self.template_data, file_name)
+
     # DEPOTS
     def populate_depot_data(self):
+        self.item_load = True
         self.depot_list.clear()
         if self.template_data.get("depots"):
             for depot in self.template_data["depots"]:
                 self.depot_list.addItem(depot["name"])
             if self.depot_list.count():
                 self.depot_list.setCurrentRow(0)
+        self.item_load = False
 
     def reload_selected_depot_data(self):
+        self.item_load = True
         self.depot_table.clear()
 
         if not self.template_data.get("depots", []):
@@ -435,6 +459,7 @@ class P4TemplateEditorDialog(QDialog):
                     )
                 ),
             )
+        self.item_load = False
 
     def add_new_depot(self):
         current_depotnames = [_['name'] for _ in self.template_data.get('depots', [])]
@@ -462,16 +487,53 @@ class P4TemplateEditorDialog(QDialog):
         self.template_data['depots'] = [_ for _ in self.template_data['depots'] if _['name'] != depot_name]
         self.populate_depot_data()
 
+    def update_current_depot_data(self):
+        if self.item_load:
+            return
+        
+        current_depot_name = self.depot_list.currentItem().text()
+        current_depot = [_ for _ in self.template_data['depots'] if _['name'] == current_depot_name]
+
+        if not current_depot:
+            return
+
+        current_depot = current_depot[0]
+        current_depot_index = self.template_data['depots'].index(current_depot)
+        refresh_list = False
+
+        for i in range(self.depot_table.rowCount()):
+            if not self.depot_table.item(i, 0):
+                continue
+
+            depot_key = self.depot_table.item(i, 0).text().lower()
+            depot_value = '' 
+
+            if self.depot_table.item(i, 1) and self.depot_table.item(i, 1).text():
+                depot_value = self.depot_table.item(i, 1).text()
+
+            if depot_key == 'name' and not depot_value:
+                continue
+
+            if depot_key == 'name' and depot_value != current_depot_name:
+                refresh_list = True
+            self.template_data["depots"][current_depot_index][depot_key] = depot_value
+
+        if refresh_list:
+            self.populate_depot_data()
+
     # GROUPS
     def populate_group_data(self):
+        self.item_load = True
         self.group_list.clear()
         if self.template_data.get("groups"):
             for group in self.template_data["groups"]:
                 self.group_list.addItem(group["name"])
             if self.group_list.count():
                 self.group_list.setCurrentRow(0)
+        self.item_load = False
     
     def reload_selected_group_data(self):
+        self.item_load = True
         self.group_table.clear()
         group_index = self.group_list.currentRow()
 
@@ -508,6 +570,7 @@ class P4TemplateEditorDialog(QDialog):
                     )
                 ),
             )
+        self.item_load = False
 
     def add_new_group(self):
         current_groupnames = [_['name'] for _ in self.template_data.get('groups', [])]
@@ -535,16 +598,53 @@ class P4TemplateEditorDialog(QDialog):
         self.template_data['groups'] = [_ for _ in self.template_data['groups'] if _['name'] != group_name]
         self.populate_group_data()
 
+    def update_current_group_data(self):
+        if self.item_load:
+            return
+        
+        current_group_name = self.group_list.currentItem().text()
+        current_group = [_ for _ in self.template_data['groups'] if _['name'] == current_group_name]
+
+        if not current_group:
+            return
+
+        current_group = current_group[0]
+        current_group_index = self.template_data['groups'].index(current_group)
+        refresh_list = False
+
+        for i in range(self.group_table.rowCount()):
+            if not self.group_table.item(i, 0):
+                continue
+
+            group_key = self.group_table.item(i, 0).text().lower()
+            group_value = '' 
+
+            if self.group_table.item(i, 1) and self.group_table.item(i, 1).text():
+                group_value = self.group_table.item(i, 1).text()
+
+            if group_key == 'name' and not group_value:
+                continue
+
+            if group_key == 'name' and group_value != current_group_name:
+                refresh_list = True
+            self.template_data["groups"][current_group_index][group_key] = group_value
+
+        if refresh_list:
+            self.populate_group_data()
+
     # USERS
     def populate_user_data(self):
+        self.item_load = True
         self.user_list.clear()
         if self.template_data.get("users"):
             for user in self.template_data["users"]:
                 self.user_list.addItem(user["name"])
             if self.user_list.count():
                 self.user_list.setCurrentRow(0)
+        self.item_load = False
 
     def reload_selected_user_data(self):
+        self.item_load = True
         self.user_table.clear()
         user_index = self.user_list.currentRow()
 
@@ -568,7 +668,8 @@ class P4TemplateEditorDialog(QDialog):
                         ", ",
                     )
                 ),
-            )    
+            )
+        self.item_load = False
 
     def add_new_user(self):
         current_usernames = [_['name'] for _ in self.template_data.get('users', [])]
@@ -596,16 +697,54 @@ class P4TemplateEditorDialog(QDialog):
         self.template_data['users'] = [_ for _ in self.template_data['users'] if _['name'] != user_name]
         self.populate_user_data()
 
+    def update_current_user_data(self):
+        if self.item_load:
+            return
+        
+        current_user_name = self.user_list.currentItem().text()
+        current_user = [_ for _ in self.template_data['users'] if _['name'] == current_user_name]
+
+        if not current_user:
+            return
+
+        current_user = current_user[0]
+        current_user_index = self.template_data['users'].index(current_user)
+        refresh_list = False
+
+        for i in range(self.user_table.rowCount()):
+            if not self.user_table.item(i, 0):
+                continue
+
+            user_key = self.user_table.item(i, 0).text().lower()
+            user_value = '' 
+
+            if self.user_table.item(i, 1) and self.user_table.item(i, 1).text():
+                user_value = self.user_table.item(i, 1).text()
+
+            if user_key == 'name' and not user_value:
+                continue
+
+            if user_key == 'name' and user_value != current_user_name:
+                refresh_list = True
+
+            self.template_data["users"][current_user_index][user_key] = user_value
+
+        if refresh_list:
+            self.populate_user_data()
+
     # STREAMS
     def populate_stream_data(self):
+        self.item_load = True
         self.stream_list.clear()
         if self.template_data.get("streams"):
             for stream in self.template_data["streams"]:
                 self.stream_list.addItem(stream["name"])
             if self.stream_list.count():
                 self.stream_list.setCurrentRow(0)
+        self.item_load = False
 
     def reload_selected_stream_data(self):
+        self.item_load = True
         self.stream_table.clear()
         self.stream_paths_list.clear()
         self.stream_remapped_list.clear()
@@ -643,6 +782,7 @@ class P4TemplateEditorDialog(QDialog):
 
         for ignored_value in self.template_data["streams"][stream_index].get('ignored', []):
             self.stream_ignored_list.addItem(ignored_value)
+        self.item_load = False
 
     def add_new_stream(self):
         current_stream_names = [_['name'] for _ in self.template_data.get('streams', [])]
@@ -670,40 +810,79 @@ class P4TemplateEditorDialog(QDialog):
         self.template_data['streams'] = [_ for _ in self.template_data['streams'] if _['name'] != stream_name]
         self.populate_stream_data()
 
+    def update_current_stream_data(self):
+        if self.item_load:
+            return
+        
+        current_stream_name = self.stream_list.currentItem().text()
+        current_stream = [_ for _ in self.template_data['streams'] if _['name'] == current_stream_name]
+
+        if not current_stream:
+            return
+
+        current_stream = current_stream[0]
+        current_stream_index = self.template_data['streams'].index(current_stream)
+        refresh_list = False
+
+        for i in range(self.stream_table.rowCount()):
+            if not self.stream_table.item(i, 0):
+                continue
+
+            stream_key = self.stream_table.item(i, 0).text().lower()
+            stream_value = '' 
+
+            if self.stream_table.item(i, 1) and self.stream_table.item(i, 1).text():
+                stream_value = self.stream_table.item(i, 1).text()
+
+            if stream_key == 'name' and not stream_value:
+                continue
+
+            if stream_key == 'name' and stream_value != current_stream_name:
+                refresh_list = True
+
+            self.template_data["streams"][current_stream_index][stream_key] = stream_value
+
+        if refresh_list:
+            self.populate_stream_data()
+
     # PROTECTIONS
     def populate_protection_data(self):
+        self.item_load = True
         self.protection_list.clear()
         if self.template_data.get("protections"):
             for protection in self.template_data["protections"]:
                 self.protection_list.addItem(protection["name"])
             if self.protection_list.count():
                 self.protection_list.setCurrentRow(0)
+        self.item_load = False
 
     def reload_selected_protection_data(self):
-            self.protection_table.clear()
-            protection_index = self.protection_list.currentRow()
+        self.item_load = True
+        self.protection_table.clear()
+        protection_index = self.protection_list.currentRow()
 
-            if not self.template_data.get('protections', []):
-                return
-            
-            for i, key in enumerate(
-                ["access", "type", "name", "host", "path", "comment"]
-            ):
-                key_item = QTableWidgetItem(key.capitalize())
-                key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
-                self.protection_table.setItem(i, 0, key_item)
-                self.protection_table.setItem(
-                    i,
-                    1,
-                    QTableWidgetItem(
-                        convert_to_string(
-                            self.template_data["protections"][protection_index].get(
-                                key, self.defaults["protection"][key]
-                            ),
-                            " ",
-                        )
-                    ),
-                )
+        if not self.template_data.get('protections', []):
+            return
+        
+        for i, key in enumerate(
+            ["access", "type", "name", "host", "path", "comment"]
+        ):
+            key_item = QTableWidgetItem(key.capitalize())
+            key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+            self.protection_table.setItem(i, 0, key_item)
+            self.protection_table.setItem(
+                i,
+                1,
+                QTableWidgetItem(
+                    convert_to_string(
+                        self.template_data["protections"][protection_index].get(
+                            key, self.defaults["protection"][key]
+                        ),
+                        " ",
+                    )
+                ),
+            )
+        self.item_load = False
 
     def add_new_protection(self):
         current_protection_names = [_['name'] for _ in self.template_data.get('protections', [])]
@@ -731,20 +910,58 @@ class P4TemplateEditorDialog(QDialog):
         self.template_data['protections'] = [_ for _ in self.template_data['protections'] if _['name'] != protection_name]
         self.populate_protection_data()
 
+    def update_current_protection_data(self):
+        if self.item_load:
+            return
+        
+        current_protection_name = self.protection_list.currentItem().text()
+        current_protection = [_ for _ in self.template_data['protections'] if _['name'] == current_protection_name]
+
+        if not current_protection:
+            return
+
+        current_protection = current_protection[0]
+        current_protection_index = self.template_data['protections'].index(current_protection)
+        refresh_list = False
+
+        for i in range(self.protection_table.rowCount()):
+            if not self.protection_table.item(i, 0):
+                continue
+
+            protection_key = self.protection_table.item(i, 0).text().lower()
+            protection_value = '' 
+
+            if self.protection_table.item(i, 1) and self.protection_table.item(i, 1).text():
+                protection_value = self.protection_table.item(i, 1).text()
+
+            if protection_key == 'name' and not protection_value:
+                continue
+
+            if protection_key == 'name' and protection_value != current_protection_name:
+                refresh_list = True
+
+            self.template_data["protections"][current_protection_index][protection_key] = protection_value
+
+        if refresh_list:
+            self.populate_protection_data()
+
     # TYPEMAP
     def populate_typemap_data(self):
-        # Types
+        self.item_load = True
         if self.template_data.get("types"):
             sorted_types = sorted(self.template_data["types"].keys())
             for typemap in sorted_types:
                 self.typemap_type_list.addItem(typemap)
             self.typemap_type_list.setCurrentRow(0)
+        self.item_load = False
 
     def reload_selected_typemap_data(self):
+            self.item_load = True
             self.typemap_path_list.clear()
             current_type = self.typemap_type_list.currentItem().text()
             for type_path in self.template_data["types"][current_type]:
                 self.typemap_path_list.addItem(type_path)
+            self.item_load = False
 
     # BRANCHES
     def populate_branch_data(self):

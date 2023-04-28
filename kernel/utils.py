@@ -14,7 +14,7 @@ def set_default(obj):
     return obj
 
 
-def write_json(data_dict, output_path, sort_keys=True):
+def write_json(data_dict, output_path, sort_keys=False):
     """
     Writes a dictionary into a json file.
     """
@@ -75,7 +75,7 @@ def gather_existing_template_names(template_folder_path="./templates"):
                 template_data = read_json(os.path.join(dir_name, template_file))
                 template_name = template_data.get('name', '')
                 
-                if template_name:
+                if template_name and template_name not in template_lut:
                     identifier = template_name
                 
                 template_lut[identifier] = os.path.join(dir_name, template_file)
