@@ -117,19 +117,32 @@ class P4TemplateEditorDialog(QDialog):
         self.stream_view_tab_widget = QTabWidget()
         
         self.stream_paths_tab = QWidget()
-        self.stream_paths_list = QListWidget()
-        self.add_stream_paths_btn = QPushButton("+")
-        self.remove_stream_paths_btn = QPushButton("-")
+        self.stream_paths_table = QTableWidget()
+        self.stream_paths_table.setColumnCount(1)
+        self.stream_paths_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
+        self.stream_paths_table.horizontalHeader().setVisible(False)
+        self.stream_paths_table.verticalHeader().setVisible(False)
+
 
         self.stream_remapped_tab = QWidget()
-        self.stream_remapped_list = QListWidget()
-        self.add_streams_remapped_btn = QPushButton("+")
-        self.remove_streams_remapped_btn = QPushButton("-")
+        self.stream_remapped_table = QTableWidget()
+        self.stream_remapped_table.setColumnCount(1)
+        self.stream_remapped_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
+        self.stream_remapped_table.horizontalHeader().setVisible(False)
+        self.stream_remapped_table.verticalHeader().setVisible(False)
 
         self.stream_ignored_tab = QWidget()
-        self.stream_ignored_list = QListWidget()
-        self.add_streams_ignored_btn = QPushButton("+")
-        self.remove_streams_ignored_btn = QPushButton("-")
+        self.stream_ignored_table = QTableWidget()
+        self.stream_ignored_table.setColumnCount(1)
+        self.stream_ignored_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
+        self.stream_ignored_table.horizontalHeader().setVisible(False)
+        self.stream_ignored_table.verticalHeader().setVisible(False)
 
         self.group_tab = QWidget()
         self.group_list = QListWidget()
@@ -234,29 +247,17 @@ class P4TemplateEditorDialog(QDialog):
         self.stream_vlayout_main.addWidget(self.stream_view_tab_widget)
         
         self.stream_paths_tab_vlayout = QVBoxLayout()
-        self.stream_paths_btn_hlayout = QHBoxLayout()
-        self.stream_paths_btn_hlayout.addWidget(self.add_stream_paths_btn )
-        self.stream_paths_btn_hlayout.addWidget(self.remove_stream_paths_btn)
-        self.stream_paths_tab_vlayout.addWidget(self.stream_paths_list)
-        self.stream_paths_tab_vlayout.addLayout(self.stream_paths_btn_hlayout)
+        self.stream_paths_tab_vlayout.addWidget(self.stream_paths_table)
         self.stream_paths_tab.setLayout(self.stream_paths_tab_vlayout) 
         self.stream_view_tab_widget.addTab(self.stream_paths_tab, "Paths")
         
         self.stream_remapped_tab_vlayout = QVBoxLayout()
-        self.stream_remapped_btn_hlayout = QHBoxLayout()
-        self.stream_remapped_btn_hlayout.addWidget(self.add_streams_remapped_btn )
-        self.stream_remapped_btn_hlayout.addWidget(self.remove_streams_remapped_btn)
-        self.stream_remapped_tab_vlayout.addWidget(self.stream_remapped_list)
-        self.stream_remapped_tab_vlayout.addLayout(self.stream_remapped_btn_hlayout)
+        self.stream_remapped_tab_vlayout.addWidget(self.stream_remapped_table)
         self.stream_remapped_tab.setLayout(self.stream_remapped_tab_vlayout) 
         self.stream_view_tab_widget.addTab(self.stream_remapped_tab, "Remapped")
 
         self.stream_ignored_tab_vlayout = QVBoxLayout()
-        self.stream_ignored_btn_hlayout = QHBoxLayout()
-        self.stream_ignored_btn_hlayout.addWidget(self.add_streams_ignored_btn )
-        self.stream_ignored_btn_hlayout.addWidget(self.remove_streams_ignored_btn)
-        self.stream_ignored_tab_vlayout.addWidget(self.stream_ignored_list)
-        self.stream_ignored_tab_vlayout.addLayout(self.stream_ignored_btn_hlayout)
+        self.stream_ignored_tab_vlayout.addWidget(self.stream_ignored_table)
         self.stream_ignored_tab.setLayout(self.stream_ignored_tab_vlayout) 
         self.stream_view_tab_widget.addTab(self.stream_ignored_tab, "Ignored")
         
@@ -373,34 +374,32 @@ class P4TemplateEditorDialog(QDialog):
 
         self.add_depot_btn.clicked.connect(self.add_new_depot)
         self.remove_depot_btn.clicked.connect(self.remove_depot)
+        self.depot_table.cellChanged.connect(self.update_current_depot_data)
 
         self.add_stream_btn.clicked.connect(self.add_new_stream)
         self.remove_stream_btn.clicked.connect(self.remove_stream)
+        self.stream_table.cellChanged.connect(self.update_current_stream_data)
+        self.stream_paths_table.cellChanged.connect(self.update_current_stream_path_data)
+        self.stream_remapped_table.cellChanged.connect(self.update_current_stream_remapped_data)
+        self.stream_ignored_table.cellChanged.connect(self.update_current_stream_ignored_data)
 
         self.add_group_btn.clicked.connect(self.add_new_group)
         self.remove_group_btn.clicked.connect(self.remove_group)
+        self.group_table.cellChanged.connect(self.update_current_group_data)
 
         self.add_user_btn.clicked.connect(self.add_new_user)
         self.remove_user_btn.clicked.connect(self.remove_user)
+        self.user_table.cellChanged.connect(self.update_current_user_data)
 
         self.add_protection_btn.clicked.connect(self.add_new_protection)
         self.remove_protection_btn.clicked.connect(self.remove_protection)
 
         self.add_branch_btn.clicked.connect(self.add_new_branch)
         self.remove_branch_btn.clicked.connect(self.remove_branch)
+        self.protection_table.cellChanged.connect(self.update_current_protection_data)
 
         self.branch_view_table.cellChanged.connect(self.update_current_branch_view_data)
         self.branch_table.cellChanged.connect(self.update_current_branch_data)
-
-        self.depot_table.cellChanged.connect(self.update_current_depot_data)
-        
-        self.group_table.cellChanged.connect(self.update_current_group_data)
-        
-        self.user_table.cellChanged.connect(self.update_current_user_data)
-        
-        self.stream_table.cellChanged.connect(self.update_current_stream_data)
-        
-        self.protection_table.cellChanged.connect(self.update_current_protection_data)
 
         self.btn_save.clicked.connect(self.save_data)
         self.btn_reload.clicked.connect(self.populate_data)
@@ -746,9 +745,9 @@ class P4TemplateEditorDialog(QDialog):
     def reload_selected_stream_data(self):
         self.item_load = True
         self.stream_table.clear()
-        self.stream_paths_list.clear()
-        self.stream_remapped_list.clear()
-        self.stream_ignored_list.clear()
+        self.stream_paths_table.clear()
+        self.stream_remapped_table.clear()
+        self.stream_ignored_table.clear()
         
         if not self.template_data.get('streams', []):
             return
@@ -773,14 +772,40 @@ class P4TemplateEditorDialog(QDialog):
                 ),
             )
 
-        for path_value in self.template_data["streams"][stream_index].get('paths', []):
-            self.stream_paths_list.addItem(path_value)
 
-        for remapped_value in self.template_data["streams"][stream_index].get('remapped', {}):
-            self.stream_remapped_list.addItem(remapped_value)
+        path_values = self.template_data["streams"][stream_index].get('paths', [])
+        self.stream_paths_table.setRowCount(len(path_values) + 1)
+        for i, path_value in enumerate(path_values):
+            self.stream_paths_table.setItem(
+                i,
+                0,
+                QTableWidgetItem(
+                    path_value,
+                ),
+            )
 
-        for ignored_value in self.template_data["streams"][stream_index].get('ignored', []):
-            self.stream_ignored_list.addItem(ignored_value)
+        remapped_values = self.template_data["streams"][stream_index].get('remapped', [])
+        self.stream_remapped_table.setRowCount(len(remapped_values) + 1)
+        for i, remapped_value in enumerate(remapped_values):
+            self.stream_remapped_table.setItem(
+                i,
+                0,
+                QTableWidgetItem(
+                    remapped_value,
+                ),
+            )
+
+        ignored_values = self.template_data["streams"][stream_index].get('ignored', [])
+        self.stream_ignored_table.setRowCount(len(ignored_values) + 1)
+        for i, ignored_value in enumerate(ignored_values):
+            self.stream_ignored_table.setItem(
+                i,
+                0,
+                QTableWidgetItem(
+                    ignored_value,
+                ),
+            )
+
         self.item_load = False
 
     def add_new_stream(self):
@@ -843,6 +868,107 @@ class P4TemplateEditorDialog(QDialog):
 
         if refresh_list:
             self.populate_stream_data()
+
+    def update_current_stream_path_data(self):
+        if self.item_load:
+            return
+        
+        current_stream_name = self.stream_list.currentItem().text()
+        current_stream = [_ for _ in self.template_data['streams'] if _['name'] == current_stream_name]
+
+        if not current_stream:
+            return
+
+        current_stream = current_stream[0]
+        current_stream_index = self.template_data['streams'].index(current_stream)
+
+        table_values = []
+        for i in range(self.stream_paths_table.rowCount()):    
+            if not self.stream_paths_table.item(i, 0):
+                continue
+
+            path_value = self.stream_paths_table.item(i, 0).text()
+
+            if path_value:
+                table_values.append(path_value)
+            
+        if table_values:
+            self.template_data["streams"][current_stream_index]['paths'] = table_values
+        
+        print(len(self.template_data["streams"][current_stream_index].get("paths", [])), self.template_data["streams"][current_stream_index].get("paths", []))
+        self.stream_paths_table.setRowCount(
+            len(
+                self.template_data["streams"][current_stream_index].get("paths", [])
+            ) + 1
+        )
+
+    def update_current_stream_remapped_data(self):
+        if self.item_load:
+            return
+        
+        current_stream_name = self.stream_list.currentItem().text()
+        current_stream = [_ for _ in self.template_data['streams'] if _['name'] == current_stream_name]
+
+        if not current_stream:
+            return
+
+        current_stream = current_stream[0]
+        current_stream_index = self.template_data['streams'].index(current_stream)
+
+        table_values = []
+        for i in range(self.stream_remapped_table.rowCount()):
+
+            if not self.stream_remapped_table.item(i, 0):
+                continue
+
+            remapped_value = self.stream_remapped_table.item(i, 0).text()
+
+            if remapped_value:
+                table_values.append(remapped_value)
+            
+        if table_values:
+            self.template_data["streams"][current_stream_index]['remapped'] = table_values
+        
+        print(len(self.template_data["streams"][current_stream_index].get("remapped", [])), self.template_data["streams"][current_stream_index].get("remapped", []))
+        self.stream_remapped_table.setRowCount(
+            len(
+                self.template_data["streams"][current_stream_index].get("remapped", [])
+            ) + 1
+        )
+
+    def update_current_stream_ignored_data(self):
+        if self.item_load:
+            return
+        
+        current_stream_name = self.stream_list.currentItem().text()
+        current_stream = [_ for _ in self.template_data['streams'] if _['name'] == current_stream_name]
+
+        if not current_stream:
+            return
+
+        current_stream = current_stream[0]
+        current_stream_index = self.template_data['streams'].index(current_stream)
+
+        table_values = []
+        for i in range(self.stream_ignored_table.rowCount()):
+
+            if not self.stream_ignored_table.item(i, 0):
+                continue
+
+            ignored_value = self.stream_ignored_table.item(i, 0).text()
+
+            if ignored_value:
+                table_values.append(ignored_value)
+            
+        if table_values:
+            self.template_data["streams"][current_stream_index]['ignored'] = table_values
+        
+        print(len(self.template_data["streams"][current_stream_index].get("ignored", [])), self.template_data["streams"][current_stream_index].get("ignored", []))
+        self.stream_ignored_table.setRowCount(
+            len(
+                self.template_data["streams"][current_stream_index].get("ignored", [])
+            ) + 1
+        )
 
     # PROTECTIONS
     def populate_protection_data(self):
