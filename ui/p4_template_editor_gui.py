@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QTabWidget,
     QListWidget,
+    QLineEdit,
     QTableWidget,
     QTableWidgetItem,
     QHeaderView,
@@ -17,6 +18,38 @@ from PyQt6.QtWidgets import (
 )
 
 from p4_templates.kernel.utils import read_json, convert_to_string, write_json
+
+class GetTypeNameDialog(QDialog):
+    def __init__(self, parent=None, type_name='TypeName'):
+        super(GetTypeNameDialog, self).__init__(parent)
+        self.type_name = type_name
+        self.type_textedit = QLineEdit(self.type_name)
+        
+        self.main_layout = QVBoxLayout()
+        self.btn_layout = QHBoxLayout()
+        
+        self.cancel_btn = QPushButton('Cancel')
+        self.ok_btn = QPushButton('OK')
+    
+        self.cancel_btn.clicked.connect(self.cancel_clicked)
+        self.ok_btn.clicked.connect(self.ok_clicked)
+
+        self.btn_layout.addWidget(self.cancel_btn)
+        self.btn_layout.addWidget(self.ok_btn)
+        self.main_layout.addWidget(self.type_textedit)
+        self.main_layout.addLayout(self.btn_layout)
+        self.setLayout(self.main_layout)
+
+        self.exec()
+        
+    def cancel_clicked(self):
+        self.type_name = None
+        self.close()
+
+    def ok_clicked(self):
+        self.type_name = self.type_textedit.text()
+        self.close()
+
 
 class P4TemplateEditorDialog(QDialog):
     def __init__(self, parent=None, template_path=None):
@@ -188,11 +221,17 @@ class P4TemplateEditorDialog(QDialog):
 
         self.typemap_tab = QWidget()
         self.typemap_type_list = QListWidget()
-        self.typemap_add_type_btn = QPushButton("+")
-        self.typemap_remove_type_btn = QPushButton("-")
-        self.typemap_path_list = QListWidget()
-        self.typemap_add_path_btn = QPushButton("+")
-        self.typemap_remove_path_btn = QPushButton("-")
+        self.add_type_btn = QPushButton("+")
+        self.edit_type_btn = QPushButton("…")
+        self.remove_type_btn = QPushButton("-")
+        self.typemap_path_table = QTableWidget()
+        
+        self.typemap_path_table.setColumnCount(1)
+        self.typemap_path_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
+        self.typemap_path_table.horizontalHeader().setVisible(False)
+        self.typemap_path_table.verticalHeader().setVisible(False)
 
         self.branch_tab = QWidget()
         self.branch_list = QListWidget()
@@ -304,20 +343,17 @@ class P4TemplateEditorDialog(QDialog):
 
         # typemap Tab
         self.typemap_hlayout = QHBoxLayout()
-        self.typemap_type_btn_hlayout = QHBoxLayout()
         self.typemap_type_vlayout = QVBoxLayout()
-        self.typemap_path_btn_hlayout = QHBoxLayout()
         self.typemap_path_vlayout = QVBoxLayout()
+        self.type_btn_hlayout = QHBoxLayout()
+
+        self.type_btn_hlayout.addWidget(self.add_type_btn)
+        self.type_btn_hlayout.addWidget(self.edit_type_btn)
+        self.type_btn_hlayout.addWidget(self.remove_type_btn)
 
         self.typemap_type_vlayout.addWidget(self.typemap_type_list)
-        self.typemap_type_btn_hlayout.addWidget(self.typemap_remove_type_btn)
-        self.typemap_type_btn_hlayout.addWidget(self.typemap_add_type_btn)
-        self.typemap_type_vlayout.addLayout(self.typemap_type_btn_hlayout)
-
-        self.typemap_path_vlayout.addWidget(self.typemap_path_list)
-        self.typemap_path_btn_hlayout.addWidget(self.typemap_remove_path_btn)
-        self.typemap_path_btn_hlayout.addWidget(self.typemap_add_path_btn)
-        self.typemap_path_vlayout.addLayout(self.typemap_path_btn_hlayout)
+        self.typemap_type_vlayout.addLayout(self.type_btn_hlayout)
+        self.typemap_path_vlayout.addWidget(self.typemap_path_table)
 
         self.typemap_hlayout.addLayout(self.typemap_type_vlayout)
         self.typemap_hlayout.addLayout(self.typemap_path_vlayout)
@@ -369,6 +405,7 @@ class P4TemplateEditorDialog(QDialog):
         self.group_list.currentItemChanged.connect(self.reload_selected_group_data)
         self.user_list.currentItemChanged.connect(self.reload_selected_user_data)
         self.protection_list.currentItemChanged.connect(self.reload_selected_protection_data)
+        self.typemap_path_table.cellChanged.connect(self.update_current_typemap_path_data)
         self.typemap_type_list.currentItemChanged.connect(self.reload_selected_typemap_data)
         self.branch_list.currentItemChanged.connect(self.reload_selected_branch_data)
 
@@ -403,6 +440,10 @@ class P4TemplateEditorDialog(QDialog):
 
         self.btn_save.clicked.connect(self.save_data)
         self.btn_reload.clicked.connect(self.populate_data)
+
+        self.add_type_btn.clicked.connect(self.add_typemap_type)
+        self.edit_type_btn.clicked.connect(self.edit_typemap_type)
+        self.remove_type_btn.clicked.connect(self.remove_typemap_type)
         
     def populate_data(self):
         self.template_data = {}
@@ -1073,6 +1114,8 @@ class P4TemplateEditorDialog(QDialog):
     # TYPEMAP
     def populate_typemap_data(self):
         self.item_load = True
+        self.typemap_type_list.clear()
+        self.typemap_path_table.clear()
         if self.template_data.get("types"):
             sorted_types = sorted(self.template_data["types"].keys())
             for typemap in sorted_types:
@@ -1080,13 +1123,102 @@ class P4TemplateEditorDialog(QDialog):
             self.typemap_type_list.setCurrentRow(0)
         self.item_load = False
 
+    def add_typemap_type(self):
+        current_types = sorted(self.template_data.get('types', {}).keys())
+        i = 1 
+        type_name = GetTypeNameDialog().type_name
+        
+        if not type_name:
+            return
+        
+        if type_name in current_types:
+            while type_name + str(i) in current_types:
+                i+=1
+            type_name += str(i)
+        
+        if 'types' not in self.template_data:
+            self.template_data['types'] = {}
+
+        self.template_data['types'][type_name] = []
+
+        self.populate_typemap_data()
+
+    def remove_typemap_type(self):
+        if not self.typemap_type_list.currentItem():
+            return
+        
+        type_name = self.typemap_type_list.currentItem().text()    
+        if type_name in self.template_data['types']:
+            del self.template_data['types'][type_name]
+
+        self.populate_typemap_data()
+
+    def edit_typemap_type(self):
+        if not self.typemap_type_list.currentItem():
+            return
+        
+        type_name = self.typemap_type_list.currentItem().text()
+        
+        new_type_name = GetTypeNameDialog(type_name=type_name).type_name
+
+        if not new_type_name:
+            return
+        
+        if new_type_name and new_type_name != type_name:
+            self.template_data['types'][new_type_name] = self.template_data['types'][type_name]
+            del self.template_data['types'][type_name]
+
+        self.populate_typemap_data()
+
     def reload_selected_typemap_data(self):
-            self.item_load = True
-            self.typemap_path_list.clear()
-            current_type = self.typemap_type_list.currentItem().text()
-            for type_path in self.template_data["types"][current_type]:
-                self.typemap_path_list.addItem(type_path)
-            self.item_load = False
+        self.item_load = True
+        self.typemap_path_table.clear()
+        
+        current_type = self.typemap_type_list.currentItem()
+        if not current_type:
+            return
+        current_type = current_type.text()
+
+        path_values = self.template_data["types"].get(current_type, [])
+        self.typemap_path_table.setRowCount(len(path_values) + 1)
+        for i, path_value in enumerate(path_values):
+            self.typemap_path_table.setItem(
+                i,
+                0,
+                QTableWidgetItem(
+                    path_value,
+                ),
+            )
+
+        self.item_load = False
+
+    def update_current_typemap_path_data(self):
+        if self.item_load:
+            return
+        
+        current_type = self.typemap_type_list.currentItem().text()
+
+        current_type_data = self.template_data['types'].get(current_type, [])
+
+        table_values = set()
+        for i in range(self.typemap_path_table.rowCount()):
+
+            if not self.typemap_path_table.item(i, 0):
+                continue
+
+            path_value = self.typemap_path_table.item(i, 0).text()
+
+            if path_value:
+                table_values.add(path_value)
+            
+        if table_values:
+            self.template_data["types"][current_type] = sorted(table_values)
+        
+        self.typemap_path_table.setRowCount(
+            len(
+                self.template_data["types"].get(current_type, [])
+            ) + 1
+        )
 
     # BRANCHES
     def populate_branch_data(self):
