@@ -5,7 +5,7 @@ P4 Templates is a Python library to aid in the quick creation of p4 environments
 ## Installation
 
 Currently the main kernal doesn't require any additional libraries beyond Python3 and the P4 commandline tools installed.
-The UI currently requires PyQt6, but isn't operational at this time. 
+The UI currently requires PyQt6. 
 
 ## Usage
 
@@ -62,6 +62,16 @@ For example, in the following snippet we see the branch mapping section from a p
   ],
 ```
 
+## TODO
+- Test coverage
+- Server details/server config info
+- Documentation
+- Validation 
+- Dry run report
+- Convert to p4python?
+- executable?
+- Cleaner CLI entry point other than kernel/process_template.py?
+ 
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
