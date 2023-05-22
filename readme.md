@@ -64,13 +64,21 @@ For example, in the following snippet we see the branch mapping section from a p
 
 ## TODO
 - Test coverage
+  - Currently there is no test coverage fro this project.
 - Server details/server config info
+  - Currently The server datat that will be in use is what you have stored in your environement variables without a way to define these 
 - Documentation
+  - More than a readme is needed 
 - Validation 
+  - I would prefer if this tool could validate the entries per tab, and particularly on the typemap to stop and erroneous edits.
 - Dry run report
+  - Would like a dry run report that will preview paths and creation counts
 - Convert to p4python?
+  - This should likely be done so that the tool can be independant from the p4 commandline calls.
 - executable?
+  - For cleanliness this requires p4python build.
 - Cleaner CLI entry point other than kernel/process_template.py?
+  - A separate entry point should be stablised beyond reaching into the kernel directly.
  
 ## License
 
