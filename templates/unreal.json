@@ -22,8 +22,7 @@
         "rmaffesoli"
       ],
       "users": [
-        "rmaffesoli",
-        "test_dude"
+        "rmaffesoli"
       ]
     }
 
@@ -31,52 +30,27 @@
   "streams": [
     {
       "depot": "{project}_depot",
-      "name": "{project}_main"
+      "name": "{project}_main",
+      "ignored": [
+        "*.pyc",
+        "*/Intermediate/*",
+        "*/Saved/*",
+        "*/DerivedDataCache/*",
+        "*/Build/*"
+      ]
     },
     {
       "depot": "{project}_depot",
       "name": "{project}_dev",
       "type": "development",
-      "parent": "{project}_main"
-    },
-    {
-      "depot": "{project}_depot",
-      "name": "{project}_approval",
-      "type": "development",
-      "parent": "{project}_main"
-    },
-    {
-      "depot": "{project}_depot",
-      "name": "{project}_dev_2",
-      "type": "development",
-      "parent": "{project}_approval",
+      "parent": "{project}_main",
       "ignored": [
         "*.pyc",
-        ".gitignore",
-        "/things_i_hate/..."
+        "*/Intermediate/*",
+        "*/Saved/*",
+        "*/DerivedDataCache/*",
+        "*/Build/*"
       ]
-    },
-    {
-      "depot": "{project}_depot",
-      "name": "{project}_task",
-      "type": "task",
-      "parent": "{project}_dev"
-    },
-    {
-      "depot": "{project}_depot",
-      "name": "{project}_dev_virtual",
-      "type": "virtual",
-      "parent": "{project}_dev_2",
-      "paths": [
-        "share ..."
-      ]
-    }
-  ],
-  "users": [
-    {
-      "name": "test_dude",
-      "email":"test1@dude.com",
-      "full_name": "test dude"
     }
   ],
   "protections": [
@@ -87,18 +61,6 @@
       "host": "*",
       "path": "//{project}_depot/...",
       "comment": "auto generated"
-    }
-  ],
-  "branches": [
-    {
-      "name": "{project}_populate",
-      "options": [
-        "unlocked"
-      ],
-      "view": {
-        "//populate_demo/main/old_project/...": "//{project}_depot/{project}_main/new_project/...",
-        "//populate_demo/main/old_project/old_project.py": "//{project}_depot/{project}_main/new_project/new_project.py"
-      }
     }
   ],
   "types": {
@@ -115,7 +77,11 @@
         "//....uasset",
         "//....umap",
         "//....upk",
-        "//....udk"
+        "//....udk",
+        "//....mb",
+        "//....psd",
+        "//....max",
+        "//....blend"
     ],
     "binary": [
         "//....bmp",
@@ -123,7 +89,6 @@
         "//....tga",
         "//....raw",
         "//....r16",
-        "//....mb",
         "//....fbx"
     ],
     "text": [
