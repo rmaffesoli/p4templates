@@ -33,10 +33,10 @@
       "name": "{project}_main",
       "ignored": [
         "*.pyc",
-        "*/Intermediate/*",
-        "*/Saved/*",
-        "*/DerivedDataCache/*",
-        "*/Build/*"
+        "/Intermediate/...",
+        "/Saved/...",
+        "/DerivedDataCache/...",
+        "/Build/..."
       ]
     },
     {
@@ -46,10 +46,10 @@
       "parent": "{project}_main",
       "ignored": [
         "*.pyc",
-        "*/Intermediate/*",
-        "*/Saved/*",
-        "*/DerivedDataCache/*",
-        "*/Build/*"
+        "/Intermediate/...",
+        "/Saved/...",
+        "/DerivedDataCache/...",
+        "/Build/..."
       ]
     }
   ],
