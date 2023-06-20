@@ -117,7 +117,7 @@ if __name__ == "__main__":
                 key, value = pairing.split(':')
                 given_parameters[key] = value
 
-        needed_parameters = gather_parameters(template)
+        needed_parameters = set(gather_parameters(template))
 
         if not needed_parameters.issubset(set(given_parameters.keys())):
             print(

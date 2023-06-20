@@ -19,7 +19,7 @@ python ./kernel/process_template.py -t /path/to/template/file.json
 If you have a specifc template predefined you can use the -n --name option that corresponds to a key value in the preset_templates.json file
 
 ```bash
-python ./kernel/process_template -n unreal
+python ./kernel/process_template -n default_unreal_template.py
 ```
 
 If you are using parameter tags in your template you can use the -p,--parameter flag to input these values for processing. 
