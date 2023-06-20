@@ -5,6 +5,7 @@ P4 Templates is a Python library to aid in the quick creation of p4 environments
 ## Installation
 
 Currently the main kernal doesn't require any additional libraries beyond Python3 and the P4 commandline tools installed.
+You will need to add this package to your site-packages location or add the root path to your PYTHONPATH env variable.
 The UI currently requires PyQt6. 
 
 ## Usage
