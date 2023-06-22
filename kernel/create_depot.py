@@ -67,6 +67,7 @@ def create_depot(
     depot_type="stream",
     stream_depth="1",
     user_name=None,
+    dryrun=0
 ):
     commands = ["p4", "depot", "-i"]
     now = datetime.now()
@@ -97,15 +98,19 @@ def create_depot(
             creation_date=now.strftime("%Y/%m/%d %H:%M:%S"),
         )
 
-    with subprocess.Popen(
-        commands,
-        stdout=subprocess.PIPE,
-        stdin=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    ) as proc:
+    if dryrun:
+        print('-'*20)
+        print(depot_template)
+    else:
+        with subprocess.Popen(
+            commands,
+            stdout=subprocess.PIPE,
+            stdin=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        ) as proc:
 
-        depot_stdout = proc.communicate(input=bytes(depot_template, "utf-8"))[0]
-        print(depot_stdout.decode())
+            depot_stdout = proc.communicate(input=bytes(depot_template, "utf-8"))[0]
+            print(depot_stdout.decode())
 
 
 if __name__ == "__main__":

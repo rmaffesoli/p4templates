@@ -1,10 +1,10 @@
 # P4 Templates
 
-P4 Templates is a Python library to aid in the quick creation of p4 environments for studios that have quick turn around projects and need to deploy a standard setup often..
+P4 Templates are a Python library to aid in the quick creation of p4 environments for studios that have quick turn around projects and need to deploy a standard setup often..
 
 ## Installation
 
-Currently the main kernal doesn't require any additional libraries beyond Python3 and the P4 commandline tools installed.
+Currently, the main kernel doesn't require any additional libraries beyond Python3 and the P4 command line tools installed.
 You will need to add this package to your site-packages location or add the root path to your PYTHONPATH env variable.
 The UI currently requires PyQt6. 
 
@@ -33,6 +33,12 @@ For example a template json string of:
 
 ```bash
 python ./kernel/process_template -n default_unreal_template -p project:demo dept:3D
+```
+
+the -d,--dryrun flag can be used to preview the the template output with the parameter substitutions applied. The output will be printed to the command line instead of being processed by the server. 
+
+```bash
+python ./kernel/process_template -n default_unreal_template -p project:demo dept:3D -d
 ```
 
 To load the editor GUI use the folowing command.
@@ -64,22 +70,22 @@ For example, in the following snippet we see the branch mapping section from a p
 ```
 
 ## TODO
-- Test coverage
+- [ ] Test coverage
   - Currently there is no test coverage fro this project.
-- Server details/server config info
+- [ ] Server details/server config info
   - Currently The server datat that will be in use is what you have stored in your environement variables without a way to define these 
-- Documentation
+- [ ] Documentation
   - More than a readme is needed 
-- Validation 
+- [ ] Validation 
   - I would prefer if this tool could validate the entries per tab, and particularly on the typemap to stop and erroneous edits.
-- Dry run report
+- [X] Dry run report
   - Would like a dry run report that will preview paths and creation counts
-- Convert to p4python?
+- [ ] Convert to p4python?
   - This should likely be done so that the tool can be independant from the p4 commandline calls.
-- executable?
+- [ ] executable?
   - For cleanliness this requires p4python build.
-- Cleaner CLI entry point other than kernel/process_template.py?
-  - A separate entry point should be stablised beyond reaching into the kernel directly.
+- [ ] Cleaner CLI entry point other than kernel/process_template.py?
+  - [ ] A separate entry point should be stablised beyond reaching into the kernel directly.
  
 ## License
 

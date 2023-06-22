@@ -50,6 +50,7 @@ def create_stream(
     paths="    share ...\n",
     remapped="",
     ignored="",
+    dryrun=0
 ):
     """create_stream doc string"""
     commands = ["p4", "stream", "-i"]
@@ -85,15 +86,19 @@ def create_stream(
         ignored=ignored,
     )
 
-    with subprocess.Popen(
-        commands,
-        stdout=subprocess.PIPE,
-        stdin=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    ) as proc:
+    if dryrun:
+        print('-'*20)
+        print(stream_template)
+    else:
+        with subprocess.Popen(
+            commands,
+            stdout=subprocess.PIPE,
+            stdin=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        ) as proc:
 
-        stream_stdout = proc.communicate(input=bytes(stream_template, "utf-8"))[0]
-        print(stream_stdout.decode())
+            stream_stdout = proc.communicate(input=bytes(stream_template, "utf-8"))[0]
+            print(stream_stdout.decode())
 
 
 if __name__ == "__main__":
