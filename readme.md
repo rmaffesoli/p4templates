@@ -17,10 +17,10 @@ You can find example templates in the `p4_templates/templates` directory. Copy o
 python ./kernel/process_template.py -t /path/to/template/file.json
 ```
 
-If you have a specifc template predefined you can use the -n --name option that corresponds to a key value in the preset_templates.json file
+If you have a specifc template predefined you can use the -n --name option that corresponds to either the name field as defined in the tempate file, or the filename itself.
 
 ```bash
-python ./kernel/process_template.py -n default_unreal_template
+python ./kernel/process_template.py -n template_name
 ```
 
 If you are using parameter tags in your template you can use the -p,--parameter flag to input these values for processing. 
@@ -32,7 +32,7 @@ For example a template json string of:
 `{"streams": [{"depot": "{dept}_depot", "name": "{project}_{dept}_main"}]}` would result in the creation of mainline stream named `demo_3D_main` within the `3D_depot` depot.
 
 ```bash
-python ./kernel/process_template -n unreal -p project:demo dept:3D
+python ./kernel/process_template -n default_unreal_template -p project:demo dept:3D
 ```
 
 To load the editor GUI use the folowing command.
