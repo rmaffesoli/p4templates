@@ -1,6 +1,6 @@
 # P4 Templates
 
-P4 Templates is a Python library to aid in the quick creation of p4 environments for studios that have quick turn around projects and need to deploy a standard setup often..
+P4 Templates are a Python library to aid in the quick creation of p4 environments for studios that have quick turn around projects and need to deploy a standard setup often..
 
 ## Installation
 
@@ -26,10 +26,11 @@ You can find example templates in the `p4_templates/templates` directory. Copy o
 python ./kernel/process_template.py -t /path/to/template/file.json
 ```
 
-If you have a specifc template predefined you can use the -n --name option that corresponds to a key value in the preset_templates.json file
+If you have a specifc template predefined you can use the -n --name option that corresponds to either the name field as defined in the tempate file, or the filename itself.
 
 ```bash
-python ./kernel/process_template.py -n default_unreal_template```
+python ./kernel/process_template.py -n template_name
+```
 
 If you are using parameter tags in your template you can use the -p,--parameter flag to input these values for processing. 
 The syntax is as follows with a ':' acting a string delimiter between the key and value. 
@@ -40,7 +41,13 @@ For example a template json string of:
 `{"streams": [{"depot": "{dept}_depot", "name": "{project}_{dept}_main"}]}` would result in the creation of mainline stream named `demo_3D_main` within the `3D_depot` depot.
 
 ```bash
-python ./kernel/process_template -n unreal -p project:demo dept:3D
+python ./kernel/process_template -n default_unreal_template -p project:demo dept:3D
+```
+
+the -d,--dryrun flag can be used to preview the the template output with the parameter substitutions applied. The output will be printed to the command line instead of being processed by the server. 
+
+```bash
+python ./kernel/process_template -n default_unreal_template -p project:demo dept:3D -d
 ```
 
 To load the editor GUI use the folowing command.
@@ -72,22 +79,22 @@ For example, in the following snippet we see the branch mapping section from a p
 ```
 
 ## TODO
-- Test coverage
-  - Currently, there is no test coverage fro this project.
-- Server details/server config info
-  - Currently, The server datat that will be in use is what you have stored in your environement variables without a way to define these 
-- Documentation
+- [ ] Test coverage
+  - Currently there is no test coverage fro this project.
+- [ ] Server details/server config info
+  - Currently The server data that will be in use is what you have stored in your environement variables without a way to define these 
+- [ ] Documentation
   - More than a readme is needed 
-- Validation 
+- [ ] Validation 
   - I would prefer if this tool could validate the entries per tab, and particularly on the typemap to stop and erroneous edits.
-- Dry run report
+- [X] Dry run report
   - Would like a dry run report that will preview paths and creation counts
-- Convert to p4python?
-  - This should likely be done so that the tool can be independent of the p4 commandline calls.
-- executable?
+- [ ] Convert to p4python?
+  - This should likely be done so that the tool can be independant from the p4 commandline calls.
+- [ ] executable?
   - For cleanliness this requires p4python build.
-- Cleaner CLI entry point other than kernel/process_template.py?
-  - A separate entry point should be stabilised beyond reaching into the kernel directly.
+- [ ] Cleaner CLI entry point other than kernel/process_template.py?
+  - [ ] A separate entry point should be stablised beyond reaching into the kernel directly.
  
 ## License
 

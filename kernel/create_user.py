@@ -22,7 +22,8 @@ def create_user(
         full_name=None,
         job_view=None,
         auth_method=None,
-        reviews=None
+        reviews=None,
+        dryrun=0
 ):
     """create_user doc string"""
     commands = ["p4", "user", "-fi"]
@@ -54,15 +55,19 @@ def create_user(
     if job_view:
         user_template = user_template + '\nJobView:    {job_view}'
 
-    with subprocess.Popen(
-        commands,
-        stdout=subprocess.PIPE,
-        stdin=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    ) as proc:
+    if dryrun:
+        print('-'*20)
+        print(user_template)
+    else:
+        with subprocess.Popen(
+            commands,
+            stdout=subprocess.PIPE,
+            stdin=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        ) as proc:
 
-        user_stdout = proc.communicate(input=bytes(user_template, "utf-8"))[0]
-        print(user_stdout.decode())
+            user_stdout = proc.communicate(input=bytes(user_template, "utf-8"))[0]
+            print(user_stdout.decode())
         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

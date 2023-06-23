@@ -48,6 +48,7 @@ def create_group(
     subgroups="",
     owners="",
     users="",
+    dryrun=0
 ):
     """create_group doc string"""
     commands = ["p4", "group", "-i"]
@@ -75,15 +76,20 @@ def create_group(
         users=users,
     )
 
-    with subprocess.Popen(
-        commands,
-        stdout=subprocess.PIPE,
-        stdin=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    ) as proc:
+    if dryrun:
+        print('-'*20)
+        print(group_template)
 
-        group_stdout = proc.communicate(input=bytes(group_template, "utf-8"))[0]
-        print(group_stdout.decode())
+    else:
+        with subprocess.Popen(
+            commands,
+            stdout=subprocess.PIPE,
+            stdin=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        ) as proc:
+
+            group_stdout = proc.communicate(input=bytes(group_template, "utf-8"))[0]
+            print(group_stdout.decode())
 
 
 if __name__ == "__main__":
