@@ -18,11 +18,11 @@ def get_typemap():
         type_stdout = proc.communicate()[0]
 
         type_string = type_stdout.decode()
-        type_string = type_string.split("TypeMap:\r")[1]
+        type_string = type_string.split("TypeMap:\n")[1]
         type_string = type_string.replace("\t", "")
         type_string = type_string.replace("\n\n", "\n")
 
-        raw_type_list = [_ for _ in type_string.split("\r") if _ not in ["", "\n"]]
+        raw_type_list = [_ for _ in type_string.split("\n") if _ not in ["", "\n"]]
         type_dict = {}
 
         for entry in raw_type_list:

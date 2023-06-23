@@ -18,12 +18,12 @@ def get_protections_table():
         perm_stdout = proc.communicate()[0]
 
         perm_table_string = perm_stdout.decode()
-        perm_table_string = perm_table_string.split("Protections:\r")[2]
+        perm_table_string = perm_table_string.split("Protections:\n")[2]
         perm_table_string = perm_table_string.replace("\t", "")
         perm_table_string = perm_table_string.replace("\n\n", "\n")
 
         raw_perm_table_list = [
-            _ for _ in perm_table_string.split("\r") if _ not in ["", "\n"]
+            _ for _ in perm_table_string.split("\n") if _ not in ["", "\n"]
         ]
         perm_table_list = []
 
@@ -35,6 +35,9 @@ def get_protections_table():
                 entry = entry.replace("  ", " ")
 
             entry_split = [_.replace("\n", "") for _ in entry.split(" ")]
+
+            if len(entry_split) < 5:
+                continue
 
             perm_table_list.append(
                 {

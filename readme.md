@@ -4,9 +4,18 @@ P4 Templates is a Python library to aid in the quick creation of p4 environments
 
 ## Installation
 
-Currently the main kernal doesn't require any additional libraries beyond Python3 and the P4 commandline tools installed.
+Currently, the main kernel doesn't require any additional libraries beyond Python3 and the P4 commandline tools installed.
 You will need to add this package to your site-packages location or add the root path to your PYTHONPATH env variable.
 The UI currently requires PyQt6. 
+
+## Pre-requisites
+* Ensure `p4` cli is setup 
+  * Link: [https://www.perforce.com/manuals/p4guide/Content/P4Guide/basic-tasks.initial.start-client.html](https://www.perforce.com/manuals/p4guide/Content/P4Guide/basic-tasks.initial.start-client.html)
+* Provision (or get the info) a Perforce Helix Core server, note the connection string: `ssl:<ip address>:<port>`
+* In the root of this directory, create a `.p4config` file with these lines:
+  * P4USER=`perforce`
+  * P4PORT=`ssl:<ip>:<port>`
+* `p4 set P4CONFIG=.p4config`
 
 ## Usage
 
@@ -64,9 +73,9 @@ For example, in the following snippet we see the branch mapping section from a p
 
 ## TODO
 - Test coverage
-  - Currently there is no test coverage fro this project.
+  - Currently, there is no test coverage fro this project.
 - Server details/server config info
-  - Currently The server datat that will be in use is what you have stored in your environement variables without a way to define these 
+  - Currently, The server datat that will be in use is what you have stored in your environement variables without a way to define these 
 - Documentation
   - More than a readme is needed 
 - Validation 
@@ -74,11 +83,11 @@ For example, in the following snippet we see the branch mapping section from a p
 - Dry run report
   - Would like a dry run report that will preview paths and creation counts
 - Convert to p4python?
-  - This should likely be done so that the tool can be independant from the p4 commandline calls.
+  - This should likely be done so that the tool can be independent of the p4 commandline calls.
 - executable?
   - For cleanliness this requires p4python build.
 - Cleaner CLI entry point other than kernel/process_template.py?
-  - A separate entry point should be stablised beyond reaching into the kernel directly.
+  - A separate entry point should be stabilised beyond reaching into the kernel directly.
  
 ## License
 
