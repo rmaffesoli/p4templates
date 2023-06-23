@@ -38,8 +38,10 @@ def get_protections_table():
                 entry = entry.replace("  ", " ")
 
             entry_split = [_.replace("\n", "") for _ in entry.split(" ")]
+
             if len(entry_split) < 5:
                 continue
+
             perm_table_list.append(
                 {
                     "access": entry_split[0],
