@@ -14,12 +14,12 @@ from p4_templates.kernel.create_user import create_user
 from p4_templates.kernel.create_branch import create_branch, populate_branch, delete_branch
 from p4_templates.kernel.edit_permissions import append_new_protections
 from p4_templates.kernel.edit_typemap import append_new_typemap_entry
-from p4_templates.kernel.utils import read_json, gather_parameters, substitute_parameters, gather_existing_template_names
+from p4_templates.kernel.utils import read_json, gather_parameters, substitute_parameters, gather_existing_template_names, load_server_config, setup_server_connection
 
 
-def process_template(template, dryrun=False):
+def process_template(template, server, dryrun=False):
 
-    append_new_typemap_entry(template.get("types", {}), dryrun=dryrun)
+    append_new_typemap_entry(template.get("types", {}), server, dryrun=dryrun)
 
     append_new_protections(template.get("protections", []), dryrun=dryrun)
 
@@ -128,9 +128,10 @@ def process_template(template, dryrun=False):
     if dryrun and branches:
         print('='*40)
 
+
 def get_template_preset(preset_name, template_folder="../templates"):
     template_lut = gather_existing_template_names(template_folder)
-    return template_lut.get(parsed_args.name, "")
+    return template_lut.get(preset_name, "")
 
 
 if __name__ == "__main__":
@@ -139,6 +140,7 @@ if __name__ == "__main__":
     parser.add_argument("-n", "--name", default="")
     parser.add_argument("-p", "--parameters", nargs='*', default="")
     parser.add_argument("-d", "--dryrun", action='store_true')
+    parser.add_argument("-c", "--config", default="../config.json")
 
     parsed_args = parser.parse_args()
 
@@ -177,8 +179,13 @@ if __name__ == "__main__":
             [print(_) for _ in needed_parameters if _ not in given_parameters.keys()]
         else:
             template = substitute_parameters(template, given_parameters)
+            
+            print("Connecting to server:")
+            p4_connection = setup_server_connection(**load_server_config(parsed_args.config))
+            print(p4_connection)
+            
             print('Processing template:', template_filename)
-            print(given_parameters)
-            process_template(template, dryrun)
+            print("parameters",given_parameters, '\n')
+            process_template(template, p4_connection, dryrun)
     else:
         print('Template not found', parsed_args.name, template_filename)

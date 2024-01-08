@@ -5,11 +5,6 @@
       "name": "{project}_depot",
       "type": "stream",
       "depth": "1"
-    },
-    {
-      "name": "the_other_guy",
-      "type": "classic",
-      "depth": "2"
     }
   ],
   "groups": [
@@ -20,82 +15,93 @@
         "rmaffesoli"
       ],
       "users": [
-        "rmaffesoli",
-        "test_dude"
-      ]
-    },
-    {
-      "name": "{project}_group2",
-      "description": "Another group I'll be making and deleting often.",
-      "owners": [
-        "test_dude"
-      ],
-      "users": [
-        "admin"
+        "rmaffesoli"
       ]
     }
   ],
   "streams": [
     {
       "depot": "{project}_depot",
-      "name": "{project}_main"
+      "name": "{project}_main",
+      "ignored": [
+        "/Library/...",
+        "/Temp/...",
+        "/Obj/...",
+        "/Build/...",
+        "/Builds/...",
+        "/UserSettings/...",
+        "/MemoryCaptures/...",
+        "/Logs/...",
+        "/Assets/AssetStoreTools/...",
+        ".collabignore",
+        ".apk",
+        ".unitypackage",
+        ".gradle",
+        "/Assets/Plugins/Editor/JetBrains/...",
+        ".vs",
+        "/ExportedObj/...",
+        ".consulo",
+        ".csproj",
+        ".unityproj",
+        ".suo",
+        ".tmp",
+        ".user",
+        ".userprefs",
+        ".pidb",
+        ".booproj",
+        ".svd",
+        ".pdb",
+        ".mdb",
+        ".opendb",
+        ".VC.db",
+        ".pidb.meta",
+        ".pdb.meta",
+        ".mdb.meta"
+      ]
     },
     {
       "depot": "{project}_depot",
       "name": "{project}_dev",
       "type": "development",
-      "parent": "{project}_main"
-    },
-    {
-      "depot": "{project}_depot",
-      "name": "{project}_approval",
-      "type": "development",
-      "parent": "{project}_main"
-    },
-    {
-      "depot": "{project}_depot",
-      "name": "{project}_dev_2",
-      "type": "development",
-      "parent": "{project}_approval",
+      "parent": "{project}_main",
       "ignored": [
-        "*.pyc",
-        ".gitignore",
-        "/things_i_hate/..."
-      ]
-    },
-    {
-      "depot": "{project}_depot",
-      "name": "{project}_task",
-      "type": "task",
-      "parent": "{project}_dev"
-    },
-    {
-      "depot": "{project}_depot",
-      "name": "{project}_dev_virtual",
-      "type": "virtual",
-      "parent": "{project}_dev_2",
-      "paths": [
-        "share ..."
+        "/Library/...",
+        "/Temp/...",
+        "/Obj/...",
+        "/Build/...",
+        "/Builds/...",
+        "/UserSettings/...",
+        "/MemoryCaptures/...",
+        "/Logs/...",
+        "/Assets/AssetStoreTools/...",
+        ".collabignore",
+        ".apk",
+        ".unitypackage",
+        ".gradle",
+        "/Assets/Plugins/Editor/JetBrains/...",
+        ".vs",
+        "/ExportedObj/...",
+        ".consulo",
+        ".csproj",
+        ".unityproj",
+        ".suo",
+        ".tmp",
+        ".user",
+        ".userprefs",
+        ".pidb",
+        ".booproj",
+        ".svd",
+        ".pdb",
+        ".mdb",
+        ".opendb",
+        ".VC.db",
+        ".pidb.meta",
+        ".pdb.meta",
+        ".mdb.meta"
       ]
     }
   ],
   "users": [
-    {
-      "name": "test_dude",
-      "email":"test1@dude.com",
-      "full_name": [
-        "test",
-        "dude"
-      ]
-    },
-    {
-      "name": "tester_duder",
-      "email":"test1@duder.com",
-      "full_name": [
-        "tester",
-        "duder"
-      ]
-    }
   ],
   "protections": [
     {
@@ -105,37 +111,9 @@
       "host": "*",
       "path": "//{project}_depot/...",
       "comment": "auto generated"
-    },
-    {
-      "access": "read",
-      "type": "group",
-      "name": "{project}_group2",
-      "host": "*",
-      "path": "//{project}_depot/...",
-      "comment": "auto generated"
     }
   ],
   "branches": [
-    {
-      "name": "unity_demo_populate",
-      "options": [
-        "unlocked"
-      ],
-      "view": {
-        "//populate_demo/main/old_project/...": "//{project}_depot/{project}_main/new_project/...",
-        "//populate_demo/main/old_project/old_project.py": "//{project}_depot/{project}_main/new_project/new_project.py"
-      }
-    },
-    {
-      "name": "unity_demo_populate2",
-      "options": [
-        "unlocked"
-      ],
-      "view": {
-        "//populate_demo/main/old_project/...": "//{project}_depot/{project}_main/new_project/...",
-        "//populate_demo/main/old_project/old_project.py": "//{project}_depot/{project}_main/new_project/new_project.py"
-      }
-    }
   ],
   "types": {
     "text": [

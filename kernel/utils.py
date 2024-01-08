@@ -4,6 +4,31 @@ import json
 import re
 import os
 
+from P4 import P4
+
+def load_server_config(config_path='config.json'):
+    return read_json(config_path)
+
+
+def setup_server_connection(port=None, user=None, password=None, charset='none'):    
+    if not (port and user and password):
+        print("missing needed variable")
+        print('port:', port)
+        print('user:', user)
+        print('passwd:', password)
+        return
+    
+    p4 = P4()
+    
+    p4.charset = charset
+    p4.password = password
+    p4.user = user
+    p4.port = port
+    
+    p4.connect()
+    p4.run_login()
+
+    return p4
 
 def set_default(obj):
     """
@@ -81,3 +106,14 @@ def gather_existing_template_names(template_folder_path="./templates"):
                 template_lut[identifier] = os.path.join(dir_name, template_file)
 
     return template_lut
+
+
+if __name__ == "__main__":
+    p4_connection = setup_server_connection(
+        port="ssl:helix:1666",
+        user="rmaffesoli",
+        password='MakeDamnSure!1',
+        charset='none',
+    )
+    print(p4_connection)
+    print(type(p4_connection))
