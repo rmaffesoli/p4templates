@@ -27,6 +27,13 @@
     }
 
   ],
+  "users": [
+    {
+      "name": "test_dude",
+      "email": "test1@dude.com",
+      "full_name": "test dude"
+    }
+  ],
   "streams": [
     {
       "depot": "{project}_depot",

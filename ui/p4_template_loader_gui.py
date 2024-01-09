@@ -17,7 +17,9 @@ from p4_templates.kernel.utils import (
     gather_parameters, 
     read_json, 
     substitute_parameters, 
-    convert_to_string
+    convert_to_string,
+    load_server_config,
+    setup_server_connection
 )
 from p4_templates.kernel.process_template import process_template
 
@@ -149,8 +151,12 @@ class P4TemplateLoaderDialog(QDialog):
 
     def process(self):
         template_data = substitute_parameters(self.template_data, self.gathered_parameters)
+        print("Connecting to server:")
+        p4_connection = setup_server_connection(**load_server_config('config.json'))
+        print(p4_connection, '\n')
+
         print('Processing template:')
-        process_template(template_data)
+        process_template(template_data, p4_connection)
         print('Finished!')
 
     def reload_ui(self):

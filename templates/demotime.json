@@ -39,16 +39,7 @@
     "streams": [
         {
             "depot": "{project}_depot",
-            "name": "{project}_main",
-            "paths": [
-                "asdf"
-            ],
-            "remapped": [
-                "asdf"
-            ],
-            "ignored": [
-                "asdf"
-            ]
+            "name": "{project}_main"
         },
         {
             "depot": "{project}_depot",
@@ -87,7 +78,6 @@
             "paths": [
                 "share ..."
             ],
-            "user": "None",
             "view": "inherit",
             "options": "allsubmit unlocked notoparent nofromparent mergedown"
         }
@@ -135,16 +125,16 @@
     ],
     "branches": [
         {
-            "name": "{project}_populate",
-            "options": [
-                "unlocked"
-            ],
-            "view": {
-                "//populate_demo/main/old_project/...": "//{project}_depot/{project}_main/new_project/...",
-                "//populate_demo/main/old_project/old_project.py": "//{project}_depot/{project}_main/new_project/new_project.py"
-            }
+          "name": "{project}_populate",
+          "options": [
+              "unlocked"
+          ],
+          "view": {
+            "//populate_demo/main/old_project/...": "//{project}_depot/{project}_main/{project}/...",
+            "//populate_demo/main/old_project/old_project.py": "//{project}_depot/{project}_main/{project}/{project}.py"
+          }
         }
-    ],
+    ], 
     "types": {
         "binary+S2w": [
             "//....exe",

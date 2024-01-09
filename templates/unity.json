@@ -101,8 +101,6 @@
       ]
     }
   ],
-  "users": [
-  ],
   "protections": [
     {
       "access": "write",
@@ -112,8 +110,6 @@
       "path": "//{project}_depot/...",
       "comment": "auto generated"
     }
-  ],
-  "branches": [
   ],
   "types": {
     "text": [

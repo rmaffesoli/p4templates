@@ -4,11 +4,10 @@
 
 from __future__ import print_function
 
-import subprocess
 
 def get_typemap(server):
     type_dict = {}
-    for entry in server.run('typemap', '-o')[0]['TypeMap']:
+    for entry in server.fetch_typemap()['TypeMap']:
         type_key, type_value = entry.split(' ')
         if type_key not in type_dict:
             type_dict[type_key] = set()
@@ -40,8 +39,6 @@ def save_typemap(type_dict, server, dryrun):
     else:
         result = server.save_typemap(typemap)
         print(result[0],'\n')
-
-
 
 
 def append_new_typemap_entry(type_entries, server, dryrun=0):

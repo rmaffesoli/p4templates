@@ -4,19 +4,8 @@
 
 from __future__ import print_function
 
-import argparse
-import subprocess
-
-USER_TEMPLATE = """
-User:    {name}
-
-Email:    {email}
-
-FullName:    {full_name}
-"""
-
-
 def create_user(
+        server,
         name,
         email,
         full_name=None,
@@ -26,65 +15,37 @@ def create_user(
         dryrun=0
 ):
     """create_user doc string"""
-    commands = ["p4", "user", "-fi"]
-
-    if isinstance(full_name, (list, set, tuple)):
-        full_name = " ".join(full_name)
-
-    if isinstance(job_view, (list, set, tuple)):
-        job_view = "".join([f"    {_}\n" for _ in job_view])
-
-    if isinstance(reviews, (list, set, tuple)):
-        reviews = "".join([f"    {_}\n" for _ in reviews])
+    
+    user_query = server.fetch_user(name)
+    if user_query.get('Update'):
+        print("User {} already exists\n".format(name))
+        return
 
     if not full_name:
         full_name=name
 
-    user_template = USER_TEMPLATE.format(
-        name=name,
-        email=email,
-        full_name=full_name
-    )
+    if not email:
+        email= '@'.join([name, full_name])
+        
+    user_dict = {
+        "User": name,
+        "Type": 'standard',
+        "Email": email,
+        "FullName": full_name
+    }
 
     if auth_method:
-        user_template = user_template + '\nAuthMethod:    {auth_method}\n'
+        user_dict['AuthMethod'] = auth_method
 
     if reviews:
-        user_template = user_template + '\nReviews:\n{reviews}\n'
+        user_dict['Reviews'] = reviews
 
     if job_view:
-        user_template = user_template + '\nJobView:    {job_view}'
+        user_dict['nJobView'] = job_view
 
     if dryrun:
         print('-'*20)
-        print(user_template)
+        print(user_dict)
+
     else:
-        with subprocess.Popen(
-            commands,
-            stdout=subprocess.PIPE,
-            stdin=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-        ) as proc:
-
-            user_stdout = proc.communicate(input=bytes(user_template, "utf-8"))[0]
-            print(user_stdout.decode())
-        
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-n", "--name", required=True)
-    parser.add_argument("-e", "--email", required=True)
-    parser.add_argument("-f", "--full_name", nargs="*", default="")
-    parser.add_argument("-a", "--auth_method", default="")
-    parser.add_argument("-r", "--reviews", nargs="*", default="")
-    parser.add_argument("-j", "--job_view", nargs="*", default="")
-
-    parsed_args = parser.parse_args()
-
-    create_user(
-        name=parsed_args.name,
-        email=parsed_args.email,
-        full_name=parsed_args.full_name,
-        job_view=parsed_args.job_view,
-        auth_method=parsed_args.auth_method,
-        reviews=parsed_args.reviews
-    )
+        server.save_user(user_dict, '-f')
