@@ -13,13 +13,13 @@ from PyQt6.QtWidgets import (
 )
 from p4_templates.ui.p4_template_editor_gui import P4TemplateEditorDialog
 from p4_templates.kernel.utils import (
-    gather_existing_template_names, 
-    gather_parameters, 
-    read_json, 
-    substitute_parameters, 
+    gather_existing_template_names,
+    gather_parameters,
+    read_json,
+    substitute_parameters,
     convert_to_string,
     load_server_config,
-    setup_server_connection
+    setup_server_connection,
 )
 from p4_templates.kernel.process_template import process_template
 
@@ -28,15 +28,15 @@ class P4TemplateLoaderDialog(QDialog):
     def __init__(self, parent=None):
         super(P4TemplateLoaderDialog, self).__init__(parent)
         self.gathered_parameters = {}
-        self.template_path = ''
-        self.template_data = ''
+        self.template_path = ""
+        self.template_data = ""
 
         # UI Setup
         self.create_ui_elements()
         self.add_ui_elements_to_layout()
         self.connect_ui()
         self.set_window_settings()
-        
+
         # Data Setup
         self.reload_ui()
 
@@ -66,14 +66,14 @@ class P4TemplateLoaderDialog(QDialog):
                 self.gathered_parameters[parameter] = value
             except:
                 pass
-        
+
         self.validate_parameters()
 
     def validate_parameters(self):
         valid = True
         for _, value in self.gathered_parameters.items():
-            if not value or ' ' in value:
-                valid = False 
+            if not value or " " in value:
+                valid = False
                 break
 
         if valid:
@@ -86,11 +86,15 @@ class P4TemplateLoaderDialog(QDialog):
             self.parameter_table.removeRow(0)
 
         if not self.template_cbox.currentText():
-            return 
-        
-        self.template_path = self.existing_template_lut[self.template_cbox.currentText()]
+            return
+
+        self.template_path = self.existing_template_lut[
+            self.template_cbox.currentText()
+        ]
         self.template_data = read_json(self.template_path)
-        self.gathered_parameters = {_:'' for _ in gather_parameters(self.template_data)}
+        self.gathered_parameters = {
+            _: "" for _ in gather_parameters(self.template_data)
+        }
 
         self.parameter_table.setRowCount(len(self.gathered_parameters))
         for i, key in enumerate(self.gathered_parameters):
@@ -101,9 +105,7 @@ class P4TemplateLoaderDialog(QDialog):
                 i,
                 1,
                 QTableWidgetItem(
-                    convert_to_string(
-                        self.gathered_parameters.get(key, "")
-                    )
+                    convert_to_string(self.gathered_parameters.get(key, ""))
                 ),
             )
 
@@ -118,16 +120,16 @@ class P4TemplateLoaderDialog(QDialog):
 
     def add_ui_elements_to_layout(self):
         self.main_layout = QVBoxLayout()
-        
+
         self.main_btn_row = QHBoxLayout()
         self.main_btn_row.addWidget(self.btn_new)
         self.main_btn_row.addWidget(self.btn_edit)
         self.main_btn_row.addWidget(self.btn_run)
-        
+
         self.main_layout.addWidget(self.template_cbox)
         self.main_layout.addWidget(self.parameter_table)
         self.main_layout.addLayout(self.main_btn_row)
-        
+
         self.setLayout(self.main_layout)
 
     def set_window_settings(self):
@@ -150,14 +152,16 @@ class P4TemplateLoaderDialog(QDialog):
         self.reload_ui()
 
     def process(self):
-        template_data = substitute_parameters(self.template_data, self.gathered_parameters)
+        template_data = substitute_parameters(
+            self.template_data, self.gathered_parameters
+        )
         print("Connecting to server:")
-        p4_connection = setup_server_connection(**load_server_config('config.json'))
-        print(p4_connection, '\n')
+        p4_connection = setup_server_connection(**load_server_config("config.json"))
+        print(p4_connection, "\n")
 
-        print('Processing template:')
+        print("Processing template:")
         process_template(template_data, p4_connection)
-        print('Finished!')
+        print("Finished!")
 
     def reload_ui(self):
         self.update_template_combobox()

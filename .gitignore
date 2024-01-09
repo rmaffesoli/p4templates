@@ -1,6 +1,7 @@
 # P4
 .p4ignore
 .p4config
+config.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

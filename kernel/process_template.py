@@ -11,14 +11,24 @@ from p4_templates.kernel.create_depot import create_depot
 from p4_templates.kernel.create_stream import create_stream
 from p4_templates.kernel.create_group import create_group
 from p4_templates.kernel.create_user import create_user
-from p4_templates.kernel.create_branch import create_branch, populate_branch, delete_branch
+from p4_templates.kernel.create_branch import (
+    create_branch,
+    populate_branch,
+    delete_branch,
+)
 from p4_templates.kernel.edit_permissions import append_new_protections
 from p4_templates.kernel.edit_typemap import append_new_typemap_entry
-from p4_templates.kernel.utils import read_json, gather_parameters, substitute_parameters, gather_existing_template_names, load_server_config, setup_server_connection
+from p4_templates.kernel.utils import (
+    read_json,
+    gather_parameters,
+    substitute_parameters,
+    gather_existing_template_names,
+    load_server_config,
+    setup_server_connection,
+)
 
 
 def process_template(template, server, dryrun=False):
-
     append_new_typemap_entry(template.get("types", {}), server, dryrun=dryrun)
 
     append_new_protections(template.get("protections", []), server, dryrun=dryrun)
@@ -30,26 +40,27 @@ def process_template(template, server, dryrun=False):
     branches = template.get("branches", [])
 
     if dryrun and users:
-        print('='*40)
-        print("Projected Users to be created:") 
+        print("=" * 40)
+        print("Projected Users to be created:")
 
-    for user in users:    
-        create_user(server,
+    for user in users:
+        create_user(
+            server,
             name=user["name"],
             email=user.get("email"),
             full_name=user.get("full_name"),
             job_view=user.get("job_view"),
             auth_method=user.get("auth_method"),
             reviews=user.get("reviews"),
-            dryrun=dryrun
+            dryrun=dryrun,
         )
 
     if dryrun and users:
-        print('='*40)
+        print("=" * 40)
 
     if dryrun and depots:
-        print('='*40)
-        print("Projected Depots to be created:") 
+        print("=" * 40)
+        print("Projected Depots to be created:")
 
     for depot in depots:
         create_depot(
@@ -57,15 +68,15 @@ def process_template(template, server, dryrun=False):
             depot_name=depot["name"],
             depot_type=depot.get("type", "stream"),
             stream_depth=depot.get("depth", "1"),
-            dryrun=dryrun
+            dryrun=dryrun,
         )
 
     if dryrun and depots:
-        print('='*40)
+        print("=" * 40)
 
     if dryrun and groups:
-        print('='*40)
-        print("Projected Groups to be created:") 
+        print("=" * 40)
+        print("Projected Groups to be created:")
 
     for group in groups:
         create_group(
@@ -82,22 +93,22 @@ def process_template(template, server, dryrun=False):
             subgroups=group.get("subgroups"),
             owners=group.get("owners"),
             users=group.get("users"),
-            dryrun=dryrun
+            dryrun=dryrun,
         )
 
     if dryrun and groups:
-        print('='*40)
+        print("=" * 40)
 
     if dryrun and streams:
-        print('='*40)
-        print("Projected Streams to be created:") 
+        print("=" * 40)
+        print("Projected Streams to be created:")
 
     for stream in streams:
         create_stream(
             server,
             depot_name=stream["depot"],
             stream_name=stream["name"],
-            stream_type=stream.get("type", 'mainline'),
+            stream_type=stream.get("type", "mainline"),
             user_name=stream.get("user", os.getenv("P4USER")),
             parent_view=stream.get("view"),
             parent_stream=stream.get("parent"),
@@ -105,15 +116,15 @@ def process_template(template, server, dryrun=False):
             paths=stream.get("paths"),
             remapped=stream.get("remapped"),
             ignored=stream.get("ignored"),
-            dryrun=dryrun
+            dryrun=dryrun,
         )
 
     if dryrun and streams:
-        print('='*40)
+        print("=" * 40)
 
     if dryrun and branches:
-        print('='*40)
-        print("Projected branch mappings to be executed:") 
+        print("=" * 40)
+        print("Projected branch mappings to be executed:")
 
     for branch in branches:
         create_branch(
@@ -122,7 +133,7 @@ def process_template(template, server, dryrun=False):
             view=branch["view"],
             options=branch.get("options", ["unlocked"]),
             owner=branch.get("owner", os.getenv("P4USER")),
-            dryrun=dryrun
+            dryrun=dryrun,
         )
         if not dryrun:
             populate_branch(server, branch["name"])
@@ -130,7 +141,7 @@ def process_template(template, server, dryrun=False):
             delete_branch(server, branch["name"])
 
     if dryrun and branches:
-        print('='*40)
+        print("=" * 40)
 
 
 def get_template_preset(preset_name, template_folder="../templates"):
@@ -142,8 +153,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-t", "--template", default="")
     parser.add_argument("-n", "--name", default="")
-    parser.add_argument("-p", "--parameters", nargs='*', default="")
-    parser.add_argument("-d", "--dryrun", action='store_true')
+    parser.add_argument("-p", "--parameters", nargs="*", default="")
+    parser.add_argument("-d", "--dryrun", action="store_true")
     parser.add_argument("-c", "--config", default="../config.json")
 
     parsed_args = parser.parse_args()
@@ -165,31 +176,33 @@ if __name__ == "__main__":
 
     if template_filename and os.path.isfile(template_filename):
         template = read_json(template_filename)
-    
+
     if template:
         given_parameters = {}
         if parsed_args.parameters:
             for pairing in parsed_args.parameters:
-                key, value = pairing.split(':')
+                key, value = pairing.split(":")
                 given_parameters[key] = value
 
         needed_parameters = set(gather_parameters(template))
 
         if not needed_parameters.issubset(set(given_parameters.keys())):
             print(
-                'Could not proceed. Not all needed parameters for the provided template have given values.', 
-                '\nThe missing parameter keys are:',
+                "Could not proceed. Not all needed parameters for the provided template have given values.",
+                "\nThe missing parameter keys are:",
             )
             [print(_) for _ in needed_parameters if _ not in given_parameters.keys()]
         else:
             template = substitute_parameters(template, given_parameters)
-            
+
             print("Connecting to server:")
-            p4_connection = setup_server_connection(**load_server_config(parsed_args.config))
+            p4_connection = setup_server_connection(
+                **load_server_config(parsed_args.config)
+            )
             print(p4_connection)
-            
-            print('Processing template:', template_filename)
-            print("parameters",given_parameters, '\n')
+
+            print("Processing template:", template_filename)
+            print("parameters", given_parameters, "\n")
             process_template(template, p4_connection, dryrun)
     else:
-        print('Template not found', parsed_args.name, template_filename)
+        print("Template not found", parsed_args.name, template_filename)

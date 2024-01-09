@@ -7,8 +7,8 @@ from __future__ import print_function
 
 def get_typemap(server):
     type_dict = {}
-    for entry in server.fetch_typemap()['TypeMap']:
-        type_key, type_value = entry.split(' ')
+    for entry in server.fetch_typemap()["TypeMap"]:
+        type_key, type_value = entry.split(" ")
         if type_key not in type_dict:
             type_dict[type_key] = set()
         type_dict[type_key].add(type_value)
@@ -26,19 +26,20 @@ def add_type(type_dict, type_key, type_value):
 
 def save_typemap(type_dict, server, dryrun):
     typemap = {
-        'TypeMap': [
-            " ".join([file_type, file_path]) for file_type in sorted(type_dict) for file_path in sorted(type_dict[file_type]) 
+        "TypeMap": [
+            " ".join([file_type, file_path])
+            for file_type in sorted(type_dict)
+            for file_path in sorted(type_dict[file_type])
         ]
-
     }
     if dryrun:
-        print('='*40)
-        print("Projected Typemap edits:") 
+        print("=" * 40)
+        print("Projected Typemap edits:")
         print(typemap)
-        print('='*40)
+        print("=" * 40)
     else:
         result = server.save_typemap(typemap)
-        print(result[0],'\n')
+        print(result[0], "\n")
 
 
 def append_new_typemap_entry(type_entries, server, dryrun=0):
@@ -48,5 +49,3 @@ def append_new_typemap_entry(type_entries, server, dryrun=0):
             existing_types = add_type(existing_types, file_type, file_path)
 
     save_typemap(existing_types, server, dryrun)
-
-

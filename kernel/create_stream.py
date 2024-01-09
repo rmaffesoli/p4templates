@@ -17,14 +17,14 @@ def create_stream(
     paths=None,
     remapped=None,
     ignored=None,
-    dryrun=0
+    dryrun=0,
 ):
     """create_stream doc string"""
-  
-    existing_stream_names = {_['Stream'] for _ in server.iterate_streams()}
 
-    full_streamname =  '//{}/{}'.format(depot_name, stream_name)
-  
+    existing_stream_names = {_["Stream"] for _ in server.iterate_streams()}
+
+    full_streamname = "//{}/{}".format(depot_name, stream_name)
+
     if full_streamname in existing_stream_names:
         print("Stream {} already exists\n".format(full_streamname))
         return
@@ -41,28 +41,28 @@ def create_stream(
             options = "allsubmit unlocked toparent fromparent mergedown"
 
     if user_name:
-        stream_spec['Owner'] = user_name
+        stream_spec["Owner"] = user_name
     if stream_type:
-        stream_spec['Type'] = stream_type
+        stream_spec["Type"] = stream_type
     if parent_view:
-        stream_spec['ParentView'] = parent_view
+        stream_spec["ParentView"] = parent_view
     if parent_stream:
         # stream_spec['baseParent'] = parent_stream
-        stream_spec['Parent'] = parent_stream
+        stream_spec["Parent"] = parent_stream
     if paths:
-        stream_spec['Paths'] = paths
+        stream_spec["Paths"] = paths
     if remapped:
-        stream_spec['Remapped'] = remapped
+        stream_spec["Remapped"] = remapped
     if ignored:
-        stream_spec['Ignored'] = ignored
+        stream_spec["Ignored"] = ignored
     if options:
-        stream_spec['Options'] = options
+        stream_spec["Options"] = options
 
     if dryrun:
-        print('-'*20)
+        print("-" * 20)
         print(stream_spec)
-        print('-'*20)
-    elif stream_spec['Type'] == 'development' and stream_spec['Parent'] == 'none':
+        print("-" * 20)
+    elif stream_spec["Type"] == "development" and stream_spec["Parent"] == "none":
         print("Skipping orphaned development stream", full_streamname)
     else:
         result = server.save_stream(stream_spec)

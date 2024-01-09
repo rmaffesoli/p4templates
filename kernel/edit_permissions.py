@@ -6,8 +6,7 @@ from __future__ import print_function
 
 
 def get_protections_table(server):
-    
-    raw_protect_list = server.fetch_protect()['Protections']
+    raw_protect_list = server.fetch_protect()["Protections"]
     perm_table_list = []
 
     for entry in raw_protect_list:
@@ -35,19 +34,24 @@ def get_protections_table(server):
 
     return perm_table_list
 
+
 def validate_protection(protection):
-    if not {"access", "type", "name", "host","path"}.issubset(set(protection.keys())):
-        print("Required protection field missing skipping entry: {}".format(protection.get('name', 'Invalid')))
-        print(protection)
+    if not {"access", "type", "name", "host", "path"}.issubset(set(protection.keys())):
+        print(
+            "Required protection field missing skipping entry: {}".format(
+                protection.get("name", "Invalid")
+            )
+        )
         return False
     return True
+
 
 def prepend_protection(protections_table, permission):
     if permission not in protections_table:
         protections_table.insert(0, permission)
     else:
-        print("protection already exists in table:", permission, '\n')
-    
+        print("protection already exists in table:", permission, "\n")
+
     return protections_table
 
 
@@ -67,13 +71,13 @@ def save_protections_table(protections_table, server, dryrun=0):
         protection_lines.append(entry_line)
 
     if dryrun:
-        print('='*40)
-        print("Projected protection table edits:") 
+        print("=" * 40)
+        print("Projected protection table edits:")
         print(protection_lines)
-        print('='*40)
+        print("=" * 40)
     else:
-        result = server.save_protect({'Protections': protection_lines})
-        print(result[0],'\n')
+        result = server.save_protect({"Protections": protection_lines})
+        print(result[0], "\n")
 
 
 def append_new_protections(protections, server, dryrun=0):
