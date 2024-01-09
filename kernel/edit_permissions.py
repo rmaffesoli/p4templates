@@ -36,8 +36,11 @@ def get_protections_table(server):
     return perm_table_list
 
 def validate_protection(protection):
-    if {"access", "type", "name", "host","path"}.issubset(set(protection.keys())):
+    if not {"access", "type", "name", "host","path"}.issubset(set(protection.keys())):
         print("Required protection field missing skipping entry: {}".format(protection.get('name', 'Invalid')))
+        print(protection)
+        return False
+    return True
 
 def prepend_protection(protections_table, permission):
     if permission not in protections_table:

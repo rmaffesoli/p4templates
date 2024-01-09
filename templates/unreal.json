@@ -38,6 +38,7 @@
     {
       "depot": "{project}_depot",
       "name": "{project}_main",
+      "type": "mainline",
       "ignored": [
         "*.pyc",
         "/Intermediate/...",

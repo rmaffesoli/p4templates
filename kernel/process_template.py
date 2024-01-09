@@ -97,7 +97,7 @@ def process_template(template, server, dryrun=False):
             server,
             depot_name=stream["depot"],
             stream_name=stream["name"],
-            stream_type=stream.get("type"),
+            stream_type=stream.get("type", 'mainline'),
             user_name=stream.get("user", os.getenv("P4USER")),
             parent_view=stream.get("view"),
             parent_stream=stream.get("parent"),

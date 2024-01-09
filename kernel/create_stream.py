@@ -10,7 +10,7 @@ def create_stream(
     depot_name=None,
     stream_name=None,
     user_name=None,
-    stream_type=None,
+    stream_type="mainline",
     parent_view=None,
     parent_stream=None,
     options=None,
@@ -62,7 +62,8 @@ def create_stream(
         print('-'*20)
         print(stream_spec)
         print('-'*20)
+    elif stream_spec['Type'] == 'development' and stream_spec['Parent'] == 'none':
+        print("Skipping orphaned development stream", full_streamname)
     else:
-        print(stream_spec)
         result = server.save_stream(stream_spec)
         print(result)

@@ -39,7 +39,8 @@
     "streams": [
         {
             "depot": "{project}_depot",
-            "name": "{project}_main"
+            "name": "{project}_main",
+            "type": "mainline"
         },
         {
             "depot": "{project}_depot",
