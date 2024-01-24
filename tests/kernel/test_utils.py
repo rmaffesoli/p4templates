@@ -43,6 +43,7 @@ def test_load_server_config(mocker):
     "port,user,password,charset,connect_called,run_login_called",
     [
         ("port", "user", "password", "charset", True, True),
+        ("port", "user", None, "charset", True, False),
         (None, "user", "password", "charset", False, False),
         ("port", None, "password", "charset", False, False),
     ],
@@ -53,7 +54,7 @@ def test_setup_server_connection(
     mocker.patch("p4_templates.kernel.utils.P4", return_value=MockP4())
     p4_connection = setup_server_connection(port, user, password, charset)
 
-    if not (connect_called and run_login_called):
+    if not connect_called and not run_login_called:
         assert p4_connection == None
     else:
         assert p4_connection.port == port

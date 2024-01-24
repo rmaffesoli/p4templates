@@ -29,7 +29,7 @@ def create_stream(
         print("Stream {} already exists\n".format(full_streamname))
         return
 
-    if parent_stream and "//" not in parent_stream:
+    if parent_stream and parent_stream != 'none' and "//" not in parent_stream:
         parent_stream = "/".join(["/", depot_name, parent_stream])
 
     stream_spec = server.fetch_stream(full_streamname)
