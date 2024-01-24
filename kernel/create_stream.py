@@ -47,7 +47,6 @@ def create_stream(
     if parent_view:
         stream_spec["ParentView"] = parent_view
     if parent_stream:
-        # stream_spec['baseParent'] = parent_stream
         stream_spec["Parent"] = parent_stream
     if paths:
         stream_spec["Paths"] = paths

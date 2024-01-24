@@ -48,7 +48,7 @@ def create_group(
     if password_timeout:
         group_spec["PasswordTimeout"] = password_timeout
     if subgroups:
-        group_spec["Subgroups"] = max_scan_rows
+        group_spec["Subgroups"] = subgroups
     if owners:
         group_spec["Owners"] = owners
     if users:

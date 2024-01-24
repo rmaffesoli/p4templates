@@ -1,0 +1,1 @@
+python -m pytest --cov=p4_templates --cov-report=html -v

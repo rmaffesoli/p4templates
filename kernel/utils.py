@@ -64,7 +64,7 @@ def gather_parameters(input, found_parameters=None):
     if isinstance(input, dict):
         input = json.dumps(input, default=set_default, indent=4, sort_keys=True)
     found_parameters = found_parameters or set()
-    matches = re.findall('({[^\{\}"]*})', input)
+    matches = re.findall(r'({[^\{\}"]*})', input)
     found_parameters = found_parameters.union(
         {_.replace("}", "").replace("{", "") for _ in matches}
     )
@@ -107,13 +107,3 @@ def gather_existing_template_names(template_folder_path="./templates"):
 
     return template_lut
 
-
-if __name__ == "__main__":
-    p4_connection = setup_server_connection(
-        port="ssl:helix:1666",
-        user="rmaffesoli",
-        password="MakeDamnSure!1",
-        charset="none",
-    )
-    print(p4_connection)
-    print(type(p4_connection))

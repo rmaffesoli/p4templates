@@ -42,11 +42,12 @@ def create_user(
         user_dict["Reviews"] = reviews
 
     if job_view:
-        user_dict["nJobView"] = job_view
+        user_dict["JobView"] = job_view
 
     if dryrun:
         print("-" * 20)
         print(user_dict)
 
     else:
-        server.save_user(user_dict, "-f")
+        result = server.save_user(user_dict, "-f")
+        print(result)

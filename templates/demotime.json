@@ -7,7 +7,10 @@
             "depth": "1"
         },
         {
-            "name": "NewDepot"
+            "name": "{test}_NewDepot",
+            "type": "stream",
+            "depth": "1",
+            "user": ""
         },
         {
             "name": "NewDepot1"
@@ -126,16 +129,16 @@
     ],
     "branches": [
         {
-          "name": "{project}_populate",
-          "options": [
-              "unlocked"
-          ],
-          "view": {
-            "//populate_demo/main/old_project/...": "//{project}_depot/{project}_main/{project}/...",
-            "//populate_demo/main/old_project/old_project.py": "//{project}_depot/{project}_main/{project}/{project}.py"
-          }
+            "name": "{project}_populate",
+            "options": [
+                "unlocked"
+            ],
+            "view": {
+                "//populate_demo/main/old_project/...": "//{project}_depot/{project}_main/{project}/...",
+                "//populate_demo/main/old_project/old_project.py": "//{project}_depot/{project}_main/{project}/{project}.py"
+            }
         }
-    ], 
+    ],
     "types": {
         "binary+S2w": [
             "//....exe",
