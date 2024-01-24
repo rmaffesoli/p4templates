@@ -12,12 +12,15 @@ def load_server_config(config_path="config.json"):
 
 
 def setup_server_connection(port=None, user=None, password=None, charset="none"):
-    if not (port and user and password):
+    if not (port and user):
         print("missing needed variable")
         print("port:", port)
         print("user:", user)
-        print("passwd:", password)
         return
+
+    if not password:
+        print("passwd:", password)
+        print('Passowrd not provided, attempting to use local ticket')
 
     p4 = P4()
 
@@ -27,7 +30,8 @@ def setup_server_connection(port=None, user=None, password=None, charset="none")
     p4.port = port
 
     p4.connect()
-    p4.run_login()
+    if password:
+        p4.run_login()
 
     return p4
 
@@ -64,7 +68,7 @@ def gather_parameters(input, found_parameters=None):
     if isinstance(input, dict):
         input = json.dumps(input, default=set_default, indent=4, sort_keys=True)
     found_parameters = found_parameters or set()
-    matches = re.findall(r'({[^\{\}"]*})', input)
+    matches = re.findall(r'({[^{}"]*})', input)
     found_parameters = found_parameters.union(
         {_.replace("}", "").replace("{", "") for _ in matches}
     )
@@ -84,7 +88,9 @@ def substitute_parameters(template, parameters):
 def convert_to_string(input, delimiter=" "):
     if isinstance(input, str):
         return input
-    elif isinstance(input, (list, set, tuple)):
+    elif isinstance(input, (list, set)):
+        return delimiter.join(sorted(input))
+    elif isinstance(input, tuple):
         return delimiter.join(input)
     else:
         return str(input)
