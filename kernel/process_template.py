@@ -4,7 +4,7 @@
 
 from __future__ import print_function
 
-import argparse
+from argparse import ArgumentParser
 import os
 
 from p4_templates.kernel.create_depot import create_depot
@@ -149,8 +149,8 @@ def get_template_preset(preset_name, template_folder="../templates"):
     return template_lut.get(preset_name, "")
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+def main():
+    parser = ArgumentParser()
     parser.add_argument("-t", "--template", default="")
     parser.add_argument("-n", "--name", default="")
     parser.add_argument("-p", "--parameters", nargs="*", default="")
@@ -163,6 +163,7 @@ if __name__ == "__main__":
     os.chdir(script_dir)
 
     dryrun = 0
+    template = None
     if parsed_args.dryrun:
         dryrun = 1
 
@@ -206,3 +207,7 @@ if __name__ == "__main__":
             process_template(template, p4_connection, dryrun)
     else:
         print("Template not found", parsed_args.name, template_filename)
+
+
+if __name__ == "__main__":
+    main()
