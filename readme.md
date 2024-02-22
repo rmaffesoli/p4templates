@@ -1,4 +1,4 @@
-# P4 Templates
+# P4 Templates [![Coverage Status](https://coveralls.io/repos/github/rmaffesoli/p4_templates/badge.svg?branch=main)](https://coveralls.io/github/rmaffesoli/p4_templates?branch=main)
 
 P4 Templates are a Python library to aid in the quick creation of p4 environments for studios that have quick turn around projects and need to deploy a standard setup often..
 

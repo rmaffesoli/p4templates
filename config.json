@@ -1,6 +1,6 @@
 {
-    "port": "",
-    "user": "",
-    "password": "",
-    "charset": ""
+    "port": "ssl:helix:1666",
+    "user": "rmaffesoli",
+    "password": null,
+    "charset": "none"
 }
