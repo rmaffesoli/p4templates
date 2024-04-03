@@ -20,7 +20,18 @@ The UI currently requires PyQt6.
 ## Server Configuration File
 
 * Server configuration is taken from the `/p4_templates/config.json` file found in the route of the project.
-  * Valid fields are "port","user","password" and "charset"
+```bash
+{
+    "server":{
+        "port": "ssl:helix:1666",
+        "user": "rmaffesoli",
+        "password": null,
+        "charset": "none"
+    },
+    "template_dir": ""
+}
+
+```
 
 ## Usage
 
@@ -55,8 +66,18 @@ the -d,--dryrun flag can be used to preview the the template output with the par
 python ./kernel/process_template -n default_unreal_template -p project:demo dept:3D -d
 ```
 
-To load the editor GUI use the folowing command.
-TO NOTE: This is currently a non operational work in progress. The readme will be updated when this is ready for use. In the mean time editing and processing can proceed by using yuor favorite text editor to create the json templates and the above cli for processing. 
+To load the editor GUI use the launch the exe. by default the exe will look for a config file and template directory nex to the executable itself, however these values can be passed in as commandline arguments as well. The template directory can also be defined in the config file itself. 
+
+```bash
+E:\repos\p4_templates\bin>E:\repos\p4_templates\bin\p4_template.exe -h
+usage: p4_template.exe [-h] [-c CONFIG] [-t TEMPLATE_DIR]
+
+options:
+  -h, --help            show this help message and exit
+  -c CONFIG, --config CONFIG
+  -t TEMPLATE_DIR, --template_dir TEMPLATE_DIR
+```
+
 
 ```bash
 python ./p4_template_tool.py
