@@ -84,7 +84,9 @@ For example, in the following snippet we see the branch mapping section from a p
 ```
 
 ## TODO
-- [ ] Test coverage
+- [X] Kernel Test coverage
+  - Currently the kernel has full basic unit test coverage
+- [ ] UI Test coverage
   - Currently there is no test coverage for this project.
 - [X] Server details/server config info
   - Currently The server data that will be in use is what you have stored in your environement variables without a way to define these 
@@ -96,8 +98,8 @@ For example, in the following snippet we see the branch mapping section from a p
   - Would like a dry run report that will preview paths and creation counts
 - [X] Convert to p4python?
   - This should likely be done so that the tool can be independant from the p4 commandline calls.
-- [ ] Executable?
-  - For cleanliness this requires p4python build.
+- [X] Executable
+  - Windows only atm
 - [ ] Cleaner CLI entry point other than kernel/process_template.py?
   - [ ] A separate entry point should be stablised beyond reaching into the kernel directly.
  

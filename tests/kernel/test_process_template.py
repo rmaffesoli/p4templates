@@ -245,7 +245,7 @@ def test_main(mocker, given_args):
         "p4_templates.kernel.process_template.setup_server_connection"
     )
     m_load_server_config = mocker.patch(
-        "p4_templates.kernel.process_template.load_server_config", return_value={'config':'values'}
+        "p4_templates.kernel.process_template.load_server_config", return_value={'server':{'config':'values'}}
     )
     m_process_template = mocker.patch(
         "p4_templates.kernel.process_template.process_template"
