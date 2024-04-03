@@ -38,6 +38,7 @@ def process_template(template, server, dryrun=False):
     groups = template.get("groups", [])
     streams = template.get("streams", [])
     branches = template.get("branches", [])
+    post_config_message = template.get("post_config_message", "")
 
     if dryrun and users:
         print("=" * 40)
@@ -142,6 +143,9 @@ def process_template(template, server, dryrun=False):
 
     if dryrun and branches:
         print("=" * 40)
+
+    if post_config_message:
+        print(post_config_message)
 
 
 def get_template_preset(preset_name, template_folder="../templates"):
