@@ -25,11 +25,13 @@ from p4_templates.kernel.process_template import process_template
 
 
 class P4TemplateLoaderDialog(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, config_path=None, template_dir=None):
         super(P4TemplateLoaderDialog, self).__init__(parent)
         self.gathered_parameters = {}
-        self.template_path = ""
+        self.template_dir = template_dir or ''
+        self.template_path = ''
         self.template_data = ""
+        self.config_path = config_path or ''
 
         # UI Setup
         self.create_ui_elements()
@@ -113,7 +115,7 @@ class P4TemplateLoaderDialog(QDialog):
 
     def update_template_combobox(self):
         self.template_cbox.clear()
-        self.existing_template_lut = gather_existing_template_names()
+        self.existing_template_lut = gather_existing_template_names(self.template_dir)
         for template_name in self.existing_template_lut:
             self.template_cbox.addItem(template_name)
         self.template_cbox
@@ -156,7 +158,7 @@ class P4TemplateLoaderDialog(QDialog):
             self.template_data, self.gathered_parameters
         )
         print("Connecting to server:")
-        p4_connection = setup_server_connection(**load_server_config("config.json"))
+        p4_connection = setup_server_connection(**load_server_config(self.config_path['server']))
         print(p4_connection, "\n")
 
         print("Processing template:")

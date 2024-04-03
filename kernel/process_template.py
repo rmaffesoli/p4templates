@@ -198,7 +198,7 @@ def main():
 
             print("Connecting to server:")
             p4_connection = setup_server_connection(
-                **load_server_config(parsed_args.config)
+                **load_server_config(parsed_args.config)['server']
             )
             print(p4_connection)
 
