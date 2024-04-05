@@ -25,7 +25,8 @@ def setup_server_connection(port=None, user=None, password=None, charset="none")
     p4 = P4()
 
     p4.charset = charset
-    p4.password = password
+    if password:
+        p4.password = password
     p4.user = user
     p4.port = port
 

@@ -158,7 +158,7 @@ class P4TemplateLoaderDialog(QDialog):
             self.template_data, self.gathered_parameters
         )
         print("Connecting to server:")
-        p4_connection = setup_server_connection(**load_server_config(self.config_path['server']))
+        p4_connection = setup_server_connection(**load_server_config(self.config_path)['server'])
         print(p4_connection, "\n")
 
         print("Processing template:")
