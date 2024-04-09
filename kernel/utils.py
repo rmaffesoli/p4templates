@@ -20,7 +20,7 @@ def setup_server_connection(port=None, user=None, password=None, charset="none")
 
     if not password:
         print("passwd:", password)
-        print('Passowrd not provided, attempting to use local ticket')
+        print('Password not provided, attempting to use local ticket')
 
     p4 = P4()
 
