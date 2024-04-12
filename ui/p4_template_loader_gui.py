@@ -32,6 +32,7 @@ class P4TemplateLoaderDialog(QDialog):
         self.template_path = ''
         self.template_data = ""
         self.config_path = config_path or ''
+        self.existing_template_lut = {}
 
         # UI Setup
         self.create_ui_elements()
@@ -62,12 +63,11 @@ class P4TemplateLoaderDialog(QDialog):
     def update_parameters(self):
         self.gathered_parameters = {}
         for row in range(self.parameter_table.rowCount()):
-            try:
+            if self.parameter_table.item(row, 0) and self.parameter_table.item(row, 1):
                 parameter = self.parameter_table.item(row, 0).text()
                 value = self.parameter_table.item(row, 1).text()
                 self.gathered_parameters[parameter] = value
-            except:
-                pass
+
 
         self.validate_parameters()
 
@@ -118,7 +118,6 @@ class P4TemplateLoaderDialog(QDialog):
         self.existing_template_lut = gather_existing_template_names(self.template_dir)
         for template_name in self.existing_template_lut:
             self.template_cbox.addItem(template_name)
-        self.template_cbox
 
     def add_ui_elements_to_layout(self):
         self.main_layout = QVBoxLayout()
