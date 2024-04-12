@@ -113,6 +113,7 @@ def test_process_template(mocker, dry_run):
                 },
             }
         ],
+        'post_config_message': 'post_config_message',
     }
 
     process_template(template, m_server, dry_run)
