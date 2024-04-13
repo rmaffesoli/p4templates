@@ -16,9 +16,6 @@ class MockArgumentParser(object):
     def parse_args(self):
         return self.args_dict
 
-    def set_args(self, args_dict=None):
-        self.args_dict = args_dict or {}
-
 
 @pytest.mark.parametrize(
     "given_args,config_values,dir_exists_values",
