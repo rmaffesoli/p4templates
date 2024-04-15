@@ -145,7 +145,7 @@ python ./p4_template_tool.py
 
 ## TODO Wishlist
 - [ ] UI Test coverage
-  - Currently there is no test coverage for this project.
+  - Currently there is only partial test coverage for the UI elements in this project.
 - [ ] Documentation
   - More than a readme and video walkthrough is likely needed.
 - [ ] Validation
