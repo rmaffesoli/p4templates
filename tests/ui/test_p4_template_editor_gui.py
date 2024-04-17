@@ -3,10 +3,13 @@ from p4templates.ui.p4_template_editor_gui import (
     GetTypeNameDialog, 
     P4TemplateEditorDialog, 
     QHeaderView, 
-    QDialog,    
-    QVBoxLayout,
-    QHBoxLayout,
+    QDialog,
+    QTableWidgetItem,
+    Qt,
+    convert_to_string
 )
+
+
 
 
 class MockQDialog(QDialog):
@@ -413,6 +416,7 @@ def test_P4TemplateEditorDialog_set_window_settings(mocker, qtbot):
     P4TEG = P4TemplateEditorDialog()
     qtbot.addWidget(P4TEG)
 
+
 def test_P4TemplateEditorDialog_connect_ui(mocker, qtbot):
     mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
     mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
@@ -422,6 +426,7 @@ def test_P4TemplateEditorDialog_connect_ui(mocker, qtbot):
 
     P4TEG = P4TemplateEditorDialog()
     qtbot.addWidget(P4TEG)
+
 
 def test_P4TemplateEditorDialog_populate_data(mocker, qtbot):
     # mocker.patch.object(P4TemplateEditorDialog, 'create_ui_elements')
@@ -459,5 +464,536 @@ def test_P4TemplateEditorDialog_populate_data(mocker, qtbot):
     m_os_path_isfile.assert_called_once_with('yep')
     m_read_json.assert_called_with('yep')
 
+
 def test_P4TemplateEditorDialog_save_data(mocker, qtbot):
-    pass
+    mocker.patch.object(P4TemplateEditorDialog, 'create_ui_elements')
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+
+    m_QFileDialog = mocker.patch('p4templates.ui.p4_template_editor_gui.QFileDialog.getSaveFileName', return_value=('file_name', 'mock'))
+    m_write_json = mocker.patch('p4templates.ui.p4_template_editor_gui.write_json')
+
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+    
+    P4TEG.template_path = '/a/fake/template/path'
+    P4TEG.template_data = {'key':'value'}
+
+    P4TEG.save_data()
+
+    m_QFileDialog.assert_called_once_with(P4TEG, 'Save File', '/a/fake/template/path', 'Text Files(*.json)')
+    m_write_json.assert_called_once_with({'key':'value'}, m_QFileDialog.return_value[0])
+
+
+def test_P4TemplateEditorDialog_populate_depot_data(mocker,qtbot):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+
+    P4TEG.template_data = {'depots': [{'name': 'test'}]}
+    
+    P4TEG.populate_depot_data()
+    
+    assert P4TEG.depot_list.count() == 1
+    assert P4TEG.item_load == False
+
+
+@pytest.mark.parametrize(
+        'template_data',
+        [
+            ({'depots': [{'name': 'test'}]}),
+            ({}),
+        ]
+)
+def test_P4TemplateEditorDialog_reload_selected_depot_data(mocker,qtbot, template_data):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+    
+    P4TEG.template_data = template_data
+    
+    P4TEG.populate_depot_data()
+
+    P4TEG.reload_selected_depot_data()
+
+    assert P4TEG.item_load == False
+
+
+def test_P4TemplateEditorDialog_add_new_depot(mocker,qtbot):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+    
+    m_populate_depot_data =  mocker.patch.object(P4TemplateEditorDialog, 'populate_depot_data')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+
+    P4TEG.add_new_depot()
+    P4TEG.add_new_depot()
+    P4TEG.add_new_depot()
+
+    pop_calls = [
+        mocker.call(),
+        mocker.call(),
+        mocker.call(),
+    ]
+
+    assert P4TEG.template_data == {
+        'depots':[
+            {'name': 'NewDepot'}, 
+            {'name': 'NewDepot1'},
+            {'name': 'NewDepot2'},
+
+        ]
+    }
+    
+    m_populate_depot_data.assert_has_calls(pop_calls)
+    
+
+def test_P4TemplateEditorDialog_remove_depot(mocker,qtbot):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+    
+    m_populate_depot_data =  mocker.patch.object(P4TemplateEditorDialog, 'populate_depot_data')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+
+    P4TEG.remove_depot()
+
+    P4TEG.template_data = {
+        'depots':[
+            {'name': 'NewDepot'}, 
+            {'name': 'NewDepot1'}, 
+        ]
+    }
+    P4TEG.depot_list.addItem('NewDepot')
+    P4TEG.depot_list.addItem('NewDepot1')
+
+    P4TEG.depot_list.setCurrentRow(0)
+    P4TEG.depot_list.setCurrentItem(P4TEG.depot_list.item(0))
+    
+    P4TEG.remove_depot()
+
+    assert P4TEG.template_data == {
+        'depots':[
+            {'name': 'NewDepot1'}, 
+        ]
+    }
+    
+    m_populate_depot_data.assert_called_once()
+
+    
+def test_P4TemplateEditorDialog_update_current_depot_data(mocker,qtbot):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+
+    P4TEG.item_load = True
+    P4TEG.update_current_depot_data() # item load
+    P4TEG.item_load = False
+
+    P4TEG.template_data = {
+        'depots':[
+            {'name': 'NewDepot'}, 
+        ]
+    }
+
+    for depot in P4TEG.template_data.get('depots', []):
+        P4TEG.depot_list.addItem(depot.get('name', ''))
+
+    P4TEG.depot_list.setCurrentRow(0)
+    P4TEG.depot_list.setCurrentItem(P4TEG.depot_list.item(0))
+
+    for i, key in enumerate(["name", "type", "depth", "user"]):
+            key_item = QTableWidgetItem(key.capitalize())
+            key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+            P4TEG.depot_table.setItem(i, 0, key_item)
+            P4TEG.depot_table.setItem(
+                i,
+                1,
+                QTableWidgetItem(
+                    convert_to_string(
+                        P4TEG.template_data["depots"][0].get(
+                            key, P4TEG.defaults["depot"][key]
+                        )
+                    )
+                ),
+            )
+
+    P4TEG.template_data = {'depots':[]}
+
+    P4TEG.update_current_depot_data() # no current depot
+
+    P4TEG.template_data = {'depots':[{'name': 'NewDepot'}, ]}
+
+    P4TEG.update_current_depot_data() # real deal
+
+    assert P4TEG.template_data == {'depots': [{'depth': '1', 'name': 'NewDepot', 'type': 'stream', 'user': ''}]}
+
+
+def test_P4TemplateEditorDialog_populate_group_data(mocker,qtbot):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+
+    P4TEG.template_data = {'groups': [{'name': 'test'}]}
+    
+    P4TEG.populate_group_data()
+    
+    assert P4TEG.group_list.count() == 1
+    assert P4TEG.item_load == False
+
+
+@pytest.mark.parametrize(
+        'template_data',
+        [
+            ({'groups': [{'name': 'test'}]}),
+            ({}),
+        ]
+)
+def test_P4TemplateEditorDialog_reload_selected_group_data(mocker,qtbot, template_data):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+    
+    P4TEG.template_data = template_data
+    
+    P4TEG.populate_group_data()
+
+    P4TEG.reload_selected_group_data()
+
+    assert P4TEG.item_load == False
+
+
+def test_P4TemplateEditorDialog_add_new_group(mocker,qtbot):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+    
+    m_populate_group_data =  mocker.patch.object(P4TemplateEditorDialog, 'populate_group_data')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+
+    P4TEG.add_new_group()
+    P4TEG.add_new_group()
+    P4TEG.add_new_group()
+
+    pop_calls = [
+        mocker.call(),
+        mocker.call(),
+        mocker.call(),
+    ]
+
+    assert P4TEG.template_data == {
+        'groups':[
+            {'name': 'NewGroup'}, 
+            {'name': 'NewGroup1'},
+            {'name': 'NewGroup2'},
+        ]
+    }
+    
+    m_populate_group_data.assert_has_calls(pop_calls)
+
+
+def test_P4TemplateEditorDialog_remove_group(mocker,qtbot):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+    
+    m_populate_group_data =  mocker.patch.object(P4TemplateEditorDialog, 'populate_group_data')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+
+    P4TEG.remove_group()
+
+    P4TEG.template_data = {
+        'groups':[
+            {'name': 'NewGroup'}, 
+            {'name': 'NewGroup1'}, 
+        ]
+    }
+    P4TEG.group_list.addItem('NewGroup')
+    P4TEG.group_list.addItem('NewGroup1')
+
+    P4TEG.group_list.setCurrentRow(0)
+    P4TEG.group_list.setCurrentItem(P4TEG.group_list.item(0))
+    
+    P4TEG.remove_group()
+
+    assert P4TEG.template_data == {
+        'groups':[
+            {'name': 'NewGroup1'}, 
+        ]
+    }
+    
+    m_populate_group_data.assert_called_once()
+
+
+def test_P4TemplateEditorDialog_update_current_group_data(mocker,qtbot):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+
+    P4TEG.item_load = True
+    P4TEG.update_current_group_data() # item load
+    P4TEG.item_load = False
+
+    P4TEG.template_data = {'groups':[{'name': 'NewGroup'}]}
+
+    for group in P4TEG.template_data.get('groups', []):
+        P4TEG.group_list.addItem(group.get('name', ''))
+
+    P4TEG.group_list.setCurrentRow(0)
+    P4TEG.group_list.setCurrentItem(P4TEG.group_list.item(0))
+
+    for i, key in enumerate(P4TEG.defaults["group"].keys()):
+            key_item = QTableWidgetItem(key.capitalize())
+            key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+            P4TEG.group_table.setItem(i, 0, key_item)
+            P4TEG.group_table.setItem(
+                i,
+                1,
+                QTableWidgetItem(
+                    convert_to_string(
+                        P4TEG.template_data["groups"][0].get(
+                            key, P4TEG.defaults["group"][key]
+                        )
+                    )
+                ),
+            )
+
+    P4TEG.template_data = {'groups':[]}
+
+    P4TEG.update_current_group_data() # no current depot
+
+    P4TEG.template_data = {'groups':[{'name': 'NewGroup'}]}
+
+    P4TEG.update_current_group_data() # real deal
+    
+    assert P4TEG.template_data == {'groups': [{'name': 'NewGroup', 'description': '', 'max_results': 'unset', 'max_scan_rows': 'unset', 'max_lock_time': 'unset', 'max_open_files': 'unset', 'timeout': '43200', 'password_timeout': 'unset', 'subgroups': '', 'owners': '', 'users': ''}]}
+
+
+def test_P4TemplateEditorDialog_populate_user_data(mocker,qtbot):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+
+    P4TEG.template_data = {'users': [{'name': 'test'}]}
+    
+    P4TEG.populate_user_data()
+    
+    assert P4TEG.user_list.count() == 1
+    assert P4TEG.item_load == False
+
+
+@pytest.mark.parametrize(
+        'template_data',
+        [
+            ({'users': [{'name': 'test'}]}),
+            ({}),
+        ]
+)
+def test_P4TemplateEditorDialog_reload_selected_user_data(mocker,qtbot, template_data):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+    
+    P4TEG.template_data = template_data
+    
+    P4TEG.populate_user_data()
+
+    P4TEG.reload_selected_user_data()
+
+    assert P4TEG.item_load == False
+
+
+def test_P4TemplateEditorDialog_add_new_user(mocker,qtbot):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+    
+    m_populate_user_data =  mocker.patch.object(P4TemplateEditorDialog, 'populate_user_data')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+
+    P4TEG.add_new_user()
+    P4TEG.add_new_user()
+    P4TEG.add_new_user()
+
+    pop_calls = [
+        mocker.call(),
+        mocker.call(),
+        mocker.call(),
+    ]
+
+    assert P4TEG.template_data == {
+        'users':[
+            {'name': 'NewUser'}, 
+            {'name': 'NewUser1'},
+            {'name': 'NewUser2'},
+        ]
+    }
+    
+    m_populate_user_data.assert_has_calls(pop_calls)
+
+
+def test_P4TemplateEditorDialog_remove_user(mocker,qtbot):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+    
+    m_populate_user_data =  mocker.patch.object(P4TemplateEditorDialog, 'populate_user_data')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+
+    P4TEG.remove_user()
+
+    P4TEG.template_data = {
+        'users':[
+            {'name': 'NewUser'}, 
+            {'name': 'NewUser1'}, 
+        ]
+    }
+    P4TEG.user_list.addItem('NewUser')
+    P4TEG.user_list.addItem('NewUser1')
+
+    P4TEG.user_list.setCurrentRow(0)
+    P4TEG.user_list.setCurrentItem(P4TEG.user_list.item(0))
+    
+    P4TEG.remove_user()
+
+    assert P4TEG.template_data == {
+        'users':[
+            {'name': 'NewUser1'}, 
+        ]
+    }
+    
+    m_populate_user_data.assert_called_once()
+
+
+def test_P4TemplateEditorDialog_update_current_user_data(mocker,qtbot):
+    mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
+    mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
+    mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
+    mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
+    mocker.patch.object(P4TemplateEditorDialog, 'exec')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
+
+    P4TEG = P4TemplateEditorDialog()
+    qtbot.addWidget(P4TEG)
+
+    P4TEG.item_load = True
+    P4TEG.update_current_user_data() # item load
+    P4TEG.item_load = False
+
+    P4TEG.template_data = {'users':[{'name': 'NewUser'}]}
+
+    for user in P4TEG.template_data.get('users', []):
+        P4TEG.user_list.addItem(user.get('name', ''))
+
+    P4TEG.user_list.setCurrentRow(0)
+    P4TEG.user_list.setCurrentItem(P4TEG.user_list.item(0))
+
+    for i, key in enumerate(P4TEG.defaults["user"].keys()):
+            key_item = QTableWidgetItem(key.capitalize())
+            key_item.setFlags(Qt.ItemFlag.ItemIsEditable)
+            P4TEG.user_table.setItem(i, 0, key_item)
+            P4TEG.user_table.setItem(
+                i,
+                1,
+                QTableWidgetItem(
+                    convert_to_string(
+                        P4TEG.template_data["users"][0].get(
+                            key, P4TEG.defaults["user"][key]
+                        )
+                    )
+                ),
+            )
+
+    P4TEG.template_data = {'users':[]}
+
+    P4TEG.update_current_user_data() # no current depot
+
+    P4TEG.template_data = {'users':[{'name': 'NewUser'}]}
+
+    P4TEG.update_current_user_data() # real deal
+    print(P4TEG.template_data)
+    assert P4TEG.template_data == {'users': [{'name': 'NewUser', 'email': '', 'full_name': '', 'auth_method': '', 'reviews': '', 'job_view': ''}]}
