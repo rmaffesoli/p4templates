@@ -1,6 +1,4 @@
 # P4 Templates
-[![Coverage Status](https://coveralls.io/repos/github/rmaffesoli/p4_templates/badge.svg?branch=main)](https://coveralls.io/github/rmaffesoli/p4_templates?branch=main)
-
 ![Support](https://img.shields.io/badge/Support-Community-yellow.svg)
 
 ## Overview
@@ -16,10 +14,8 @@ The UI currently requires PyQt6.
 ##### CLI:
 p4python                  2023.2.2581979\
 ##### GUI:
-PyQt6                     6.6.1\
-PyQt6-Qt6                 6.6.3\
-PyQt6-sip                 13.6.0
-##### EXE BUILD:
+PyQt6                     6.6.1
+##### EXE BUILD Requirements:
 altgraph                  0.17.4\
 packaging                 24.0\
 pefile                    2023.2.7\
@@ -27,7 +23,7 @@ pyinstaller               6.5.0\
 pyinstaller-hooks-contrib 2024.3\
 pywin32-ctypes            0.2.2\
 setuptools                69.2.0
-##### Testing:
+##### Testing requirements:
 colorama                  0.4.6\
 coverage                  7.4.4\
 iniconfig                 2.0.0\
@@ -62,7 +58,7 @@ pytest-mock               3.14.0
 ## CLI Usage
 
 * To process a specific json template pass in the file path with the -t flag.
-You can find example templates in the `p4_templates/templates` directory. Copy one if these templates, edit to fit your needs, and then process it to add the requested components to your p4d server. To Note: You will need the p4 Permissions level required to complete these actions for the script to succeed.
+You can find example templates in the `p4templates/templates` directory. Copy one if these templates, edit to fit your needs, and then process it to add the requested components to your p4d server. To Note: You will need the p4 Permissions level required to complete these actions for the script to succeed.
 
 ```bash
 python ./kernel/process_template.py -t /path/to/template/file.json
@@ -118,7 +114,7 @@ For example, in the following snippet we see the branch mapping section from a p
 * To load the editor GUI use the launch the exe. By default the exe will look for a config file and template directory next to the executable itself, however these values can be passed in as command line arguments as well. The template directory can also be defined in the config file itself.
 
 ```bash
-E:\repos\p4_templates\bin>E:\repos\p4_templates\bin\p4_template.exe -h
+E:\repos\p4templates\bin>E:\repos\p4templates\bin\p4_template.exe -h
 usage: p4_template.exe [-h] [-c CONFIG] [-t TEMPLATE_DIR]
 
 options:

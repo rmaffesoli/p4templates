@@ -1,5 +1,5 @@
 import pytest
-from p4_templates.ui.p4_template_editor_gui import (
+from p4templates.ui.p4_template_editor_gui import (
     GetTypeNameDialog, 
     P4TemplateEditorDialog, 
     QHeaderView, 
@@ -19,7 +19,7 @@ class MockQDialog(QDialog):
 
 def test_GetTypeNameDialog_init(qtbot,mocker):
     m_exec = mocker.patch.object(GetTypeNameDialog, 'exec')
-    mocker.patch('p4_templates.ui.p4_template_editor_gui.QDialog')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
 
     GTND = GetTypeNameDialog()
     qtbot.addWidget(GTND)
@@ -31,7 +31,7 @@ def test_GetTypeNameDialog_init(qtbot,mocker):
 
 def test_GetTypeNameDialog_cancel_clicked(qtbot,mocker):
     mocker.patch.object(GetTypeNameDialog, 'exec')
-    mocker.patch('p4_templates.ui.p4_template_editor_gui.QDialog')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
     m_close = mocker.patch.object(GetTypeNameDialog, 'close')
 
     GTND = GetTypeNameDialog()
@@ -48,7 +48,7 @@ def test_GetTypeNameDialog_cancel_clicked(qtbot,mocker):
 
 def test_GetTypeNameDialog_ok_clicked(qtbot,mocker):
     mocker.patch.object(GetTypeNameDialog, 'exec')
-    mocker.patch('p4_templates.ui.p4_template_editor_gui.QDialog')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
     m_close = mocker.patch.object(GetTypeNameDialog, 'close')
 
     GTND = GetTypeNameDialog()
@@ -72,7 +72,7 @@ def test_P4TemplateEditorDialog_init(mocker,qtbot):
     m_set_window_settings = mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
     m_populate_data = mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
     m_exec = mocker.patch.object(P4TemplateEditorDialog, 'exec')
-    mocker.patch('p4_templates.ui.p4_template_editor_gui.QDialog')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
 
     P4TEG = P4TemplateEditorDialog()
     qtbot.addWidget(P4TEG)
@@ -92,13 +92,13 @@ def test_P4TemplateEditorDialog_create_ui_elements(mocker, qtbot):
     mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
     mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
     mocker.patch.object(P4TemplateEditorDialog, 'exec')
-    mocker.patch('p4_templates.ui.p4_template_editor_gui.QDialog')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
 
-    m_QPushButton = mocker.patch('p4_templates.ui.p4_template_editor_gui.QPushButton')
-    m_QTabWidget = mocker.patch('p4_templates.ui.p4_template_editor_gui.QTabWidget')
-    m_QWidget = mocker.patch('p4_templates.ui.p4_template_editor_gui.QWidget')
-    m_QListWidget = mocker.patch('p4_templates.ui.p4_template_editor_gui.QListWidget')
-    m_QTableWidget = mocker.patch('p4_templates.ui.p4_template_editor_gui.QTableWidget')
+    m_QPushButton = mocker.patch('p4templates.ui.p4_template_editor_gui.QPushButton')
+    m_QTabWidget = mocker.patch('p4templates.ui.p4_template_editor_gui.QTabWidget')
+    m_QWidget = mocker.patch('p4templates.ui.p4_template_editor_gui.QWidget')
+    m_QListWidget = mocker.patch('p4templates.ui.p4_template_editor_gui.QListWidget')
+    m_QTableWidget = mocker.patch('p4templates.ui.p4_template_editor_gui.QTableWidget')
 
     P4TEG = P4TemplateEditorDialog()
     qtbot.addWidget(P4TEG)
@@ -394,7 +394,7 @@ def test_P4TemplateEditorDialog_add_ui_elements_to_layout(mocker, qtbot, monkeyp
     mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
     mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
     mocker.patch.object(P4TemplateEditorDialog, 'exec')
-    mocker.patch('p4_templates.ui.p4_template_editor_gui.QDialog')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
 
     P4TEG = P4TemplateEditorDialog()
     qtbot.addWidget(P4TEG)
@@ -408,7 +408,7 @@ def test_P4TemplateEditorDialog_set_window_settings(mocker, qtbot):
     mocker.patch.object(P4TemplateEditorDialog, 'connect_ui')
     mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
     mocker.patch.object(P4TemplateEditorDialog, 'exec')
-    mocker.patch('p4_templates.ui.p4_template_editor_gui.QDialog')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
 
     P4TEG = P4TemplateEditorDialog()
     qtbot.addWidget(P4TEG)
@@ -418,7 +418,7 @@ def test_P4TemplateEditorDialog_connect_ui(mocker, qtbot):
     mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
     mocker.patch.object(P4TemplateEditorDialog, 'populate_data')
     mocker.patch.object(P4TemplateEditorDialog, 'exec')
-    mocker.patch('p4_templates.ui.p4_template_editor_gui.QDialog')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
 
     P4TEG = P4TemplateEditorDialog()
     qtbot.addWidget(P4TEG)
@@ -429,7 +429,7 @@ def test_P4TemplateEditorDialog_populate_data(mocker, qtbot):
     mocker.patch.object(P4TemplateEditorDialog, 'add_ui_elements_to_layout')
     mocker.patch.object(P4TemplateEditorDialog, 'set_window_settings')
     mocker.patch.object(P4TemplateEditorDialog, 'exec')
-    mocker.patch('p4_templates.ui.p4_template_editor_gui.QDialog')
+    mocker.patch('p4templates.ui.p4_template_editor_gui.QDialog')
 
     m_populate_depot_data = mocker.patch.object(P4TemplateEditorDialog, 'populate_depot_data')
     m_populate_group_data = mocker.patch.object(P4TemplateEditorDialog, 'populate_group_data')
@@ -439,8 +439,8 @@ def test_P4TemplateEditorDialog_populate_data(mocker, qtbot):
     m_populate_typemap_data = mocker.patch.object(P4TemplateEditorDialog, 'populate_typemap_data')
     m_populate_branch_data = mocker.patch.object(P4TemplateEditorDialog, 'populate_branch_data')
 
-    m_os_path_isfile = mocker.patch('p4_templates.ui.p4_template_editor_gui.os.path.isfile', return_value=True)
-    m_read_json = mocker.patch('p4_templates.ui.p4_template_editor_gui.read_json', return_value={})
+    m_os_path_isfile = mocker.patch('p4templates.ui.p4_template_editor_gui.os.path.isfile', return_value=True)
+    m_read_json = mocker.patch('p4templates.ui.p4_template_editor_gui.read_json', return_value={})
 
     P4TEG = P4TemplateEditorDialog()
     qtbot.addWidget(P4TEG)

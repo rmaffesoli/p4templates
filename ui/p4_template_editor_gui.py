@@ -16,7 +16,7 @@ from PyQt6.QtWidgets import (
     QFileDialog,
 )
 
-from p4_templates.kernel.utils import read_json, convert_to_string, write_json
+from p4templates.kernel.utils import read_json, convert_to_string, write_json
 
 
 class GetTypeNameDialog(QDialog):
