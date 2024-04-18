@@ -1,4 +1,6 @@
 # P4 Templates
+[![Coverage Status](https://coveralls.io/repos/github/rmaffesoli/p4_templates/badge.svg?branch=main)](https://coveralls.io/github/rmaffesoli/p4_templates?branch=main)
+
 ![Support](https://img.shields.io/badge/Support-Community-yellow.svg)
 
 ## Overview
@@ -140,8 +142,6 @@ python ./p4_template_tool.py
 * This script will attempt to upload test results to coveralls, however don't be concerned if this portion fails as it does require a private repo_token that will not be included in this github repository.
 
 ## TODO Wishlist
-- [ ] UI Test coverage
-  - Currently there is only partial test coverage for the UI elements in this project.
 - [ ] Documentation
   - More than a readme and video walkthrough is likely needed.
 - [ ] Validation
